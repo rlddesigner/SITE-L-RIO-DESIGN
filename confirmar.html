@@ -88,31 +88,33 @@
 
     // opcional: exibe o valor aproximado
     async function buscarPreco() {
-      if (!codigo) return;
-      const { data, error } = await supabase
-        .from("encomendas")
-        .select("tipo_capa, orelhas")
-        .eq("codigo_rastreio", codigo)
-        .single();
+  if (!codigo) return;
+  const { data, error } = await supabase
+    .from("encomendas")
+    .select("tipo_capa, orelhas")
+    .eq("codigo_rastreio", codigo)
+    .single();
 
-      if (error || !data) {
-        document.getElementById("preco").textContent = "indisponível";
-        return;
-      }
+  if (error || !data || !data.tipo_capa) {
+    document.getElementById("preco").textContent = "indisponível";
+    return;
+  }
 
-      let preco = 0;
-      const tipo = data.tipo_capa;
-      const orelhas = data.orelhas;
+  let preco = 0;
+  const tipo = data.tipo_capa;
+  const orelhas = data.orelhas || "nao"; // se não tiver orelhas, trata como "não"
 
-      if (tipo === "ebook") preco = 60;
-      else if (tipo === "fisica") preco = orelhas === "sim" ? 40 : 25;
-      else if (tipo === "ambas") preco = 100;
+  if (tipo === "ebook") {
+    preco = 60;
+  } else if (tipo === "fisica") {
+    preco = orelhas === "sim" ? 40 : 25;
+  } else if (tipo === "ambas") {
+    preco = 100;
+  }
 
-      document.getElementById("preco").textContent = `R$ ${preco},00`;
-    }
+  document.getElementById("preco").textContent = `R$ ${preco},00`;
+}
 
-
-    buscarPreco();
   </script>
 </body>
 </html>
