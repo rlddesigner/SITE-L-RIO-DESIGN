@@ -140,25 +140,24 @@
     }
 
     async function buscarPorCodigo() {
-  const codigo = document.getElementById("codigo").value.trim();
-  if (!codigo) return alert("Digite o código de rastreio.");
+      const codigo = document.getElementById("codigo").value.trim();
+      if (!codigo) return alert("Digite o código de rastreio.");
 
-  resultado.innerHTML = `<p>🔄 Buscando...</p>`;
-  resultado.style.display = "block";
+      resultado.innerHTML = `<p>🔄 Buscando...</p>`;
+      resultado.style.display = "block";
 
-  const { data, error } = await supabase
-    .from("encomendas")
-    .select("*")
-    .eq("codigo_rastreio", codigo)
-    .single();
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("*")
+        .eq("codigo_rastreio", codigo)
+        .single();
 
-  if (error || !data) {
-    resultado.innerHTML = "❌ Nenhum pedido encontrado com esse código.";
-  } else {
-    resultado.innerHTML = formatarPedido(data);
-  }
-}
-
+      if (error || !data) {
+        resultado.innerHTML = "❌ Nenhum pedido encontrado com esse código.";
+      } else {
+        resultado.innerHTML = formatarPedido(data);
+      }
+    }
 
     async function buscarPorEmail() {
       const email = document.getElementById("email").value.trim();
@@ -173,7 +172,7 @@
         .eq("email", email)
         .order("data_envio", { ascending: false });
 
-      if (error || !data.length) {
+      if (error || !data || data.length === 0) {
         resultado.innerHTML = "❌ Nenhum pedido encontrado para esse e-mail.";
       } else {
         resultado.innerHTML = data.map(formatarPedido).join("");
