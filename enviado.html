@@ -90,18 +90,14 @@
   </footer>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const codigo = urlParams.get("codigo");
-    const linkDiv = document.getElementById("link-acompanhar");
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get("codigo");
+    const botao = document.getElementById("botao-status");
 
     if (codigo) {
-      linkDiv.innerHTML = `
-        <a class="botao-acompanhar" href="acompanhar.html?codigo=${codigo}">
-          📦 Acompanhar Pedido
-        </a>
-      `;
+      botao.href = `status.html?codigo=${codigo}`;
     } else {
-      linkDiv.innerHTML = `<p style="color: red;">Não foi possível gerar o link de rastreio.</p>`;
+      botao.style.display = "none";
     }
   </script>
 
