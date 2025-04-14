@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Encomenda Enviada ✨</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .enviado-container {
+      max-width: 700px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: #fffaf7;
+      border: 2px solid #ffeedf;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
+    }
+
+    .enviado-container h1 {
+      color: #217c67;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .enviado-container p {
+      font-size: 1.1rem;
+      color: #444;
+      margin: 0.6rem 0;
+    }
+
+    .botao-acompanhar {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.6rem;
+      background-color: #217c67;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .botao-acompanhar:hover {
+      background-color: #1c6654;
+    }
+
+    .avisinho-final {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #555;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho -->
+  <header class="topo-site">
+    <img src="assets/logo.png" alt="Logo Lírio D. Design" class="logo" />
+    <nav class="menu-principal">
+      <ul>
+        <li><a href="index.html">✿ Início</a></li>
+        <li><a href="sobre.html">✿ Sobre</a></li>
+        <li><a href="portfolio.html">✿ Portfólio</a></li>
+        <li><a href="servicos.html">✿ Serviços</a></li>
+        <li><a href="contato.html">✿ Contato</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="enviado-container">
+    <h1>✨ Sua encomenda foi enviada com sucesso!</h1>
+    <p>Muito obrigada pela confiança. 💖</p>
+    <p>Você pode acompanhar o andamento da sua encomenda clicando abaixo:</p>
+
+    <div id="link-acompanhar"></div>
+
+    <p class="avisinho-final">📧 Não se preocupe, você receberá um e-mail com todas as informações necessárias para a criação da sua capa.</p>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="rodape">
+    <div class="links-uteis">
+      <a href="termos.html">📄 Termos e Condições</a>
+      <a href="faq.html">❓ Perguntas Frequentes</a>
+      <a href="politica.html">🔒 Política de Privacidade</a>
+    </div>
+    <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigo = urlParams.get("codigo");
+    const linkDiv = document.getElementById("link-acompanhar");
+
+    if (codigo) {
+      linkDiv.innerHTML = `
+        <a class="botao-acompanhar" href="acompanhar.html?codigo=${codigo}">
+          📦 Acompanhar Pedido
+        </a>
+      `;
+    } else {
+      linkDiv.innerHTML = `<p style="color: red;">Não foi possível gerar o link de rastreio.</p>`;
+    }
+  </script>
+
+</body>
+</html>

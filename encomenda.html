@@ -209,11 +209,8 @@
         return;
       }
 
-      document.getElementById("mensagem-final").style.display = "block";
-      document.getElementById("botao-acompanhar").href = `acompanhar.html?codigo=${codigo_rastreio}`;
-      form.style.display = "none";
-      document.getElementById("mensagem-final").scrollIntoView({ behavior: 'smooth' });
-    });
+      window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
+
   </script>
 </body>
 </html>
