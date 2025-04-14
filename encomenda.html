@@ -104,17 +104,19 @@
       tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || ""
     };
 
-    const { error } = await supabase.from("encomendas").insert([dados]);
-
-    if (error) {
-      alert("❌ Ops! Algo deu errado. Tente novamente mais tarde.");
-      console.error("Erro Supabase:", error);
-    } else {
-      alert("✨ Pedido enviado com sucesso! Obrigada por confiar 💖");
-      form.reset();
-    }
-  });
-</script>
+    const { error } = await supabase.from("encomendas").insert([{
+  nome,
+  email,
+  titulo_livro: titulo,
+  genero,
+  sinopse,
+  referencias,
+  tipo_capa,
+  instagram,
+  cores,
+  observacoes,
+  data_envio: new Date().toISOString() // adiciona a data atual
+}]);
 
 </body>
 </html>
