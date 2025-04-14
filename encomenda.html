@@ -132,14 +132,15 @@ console.log({
   link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}`
 });
 
-emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
-  nome: dados.autor, // ← corrigido
+await emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
+  nome: dados.autor,
   email: dados.email,
   titulo: dados.titulo,
   tipo_capa: dados.tipo_capa,
   codigo_rastreio: codigo_rastreio,
   preco: precoCalculado,
-  link_confirmacao: linkConfirmacao // ← ADICIONADO
+  link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}`
+
 }).then(() => {
   console.log("📩 E-mail enviado com sucesso!");
 }).catch((err) => {
