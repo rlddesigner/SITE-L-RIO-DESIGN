@@ -121,16 +121,26 @@ const linkConfirmacao = `https://lliriodesign.netlify.app/status.html?codigo=${c
 
 // Enviar e-mail com EmailJS
 
-console.log("📬 Enviando e-mail com os seguintes dados:");
-console.log({
-  nome: dados.autor,
-  email: dados.email,
-  titulo: dados.titulo,
-  tipo_capa: dados.tipo_capa,
-  codigo_rastreio: codigo_rastreio,
-  preco: precoCalculado,
-  link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}`
-});
+try {
+  console.log("Enviando email...");
+  const response = await emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
+    nome: dados.autor,
+    email: dados.email,
+    titulo: dados.titulo,
+    tipo_capa: dados.tipo_capa,
+    codigo_rastreio: codigo_rastreio,
+    preco: precoCalculado,
+    link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}`
+  });
+  console.log("📬 E-mail enviado com sucesso!", response);
+
+  // Agora sim redireciona
+  window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
+} catch (error) {
+  console.error("❌ Erro ao enviar e-mail:", error);
+  alert("Erro ao enviar e-mail. Tente novamente.");
+}
+
 
 await emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
   nome: dados.autor,
