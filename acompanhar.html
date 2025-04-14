@@ -57,14 +57,6 @@
       border: 1px solid #ddd;
     }
 
-    .card-pedido {
-      border: 1px solid #eee;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-      background-color: #fffefb;
-    }
-
     .botao-verde {
       display: inline-block;
       margin-top: 0.5rem;
@@ -127,62 +119,47 @@
 
     const resultado = document.getElementById("resultado");
 
-    function formatarPedido(encomenda) {
-      return `
-        <div class="card-pedido">
-          <h3>${encomenda.titulo || "Sem título"}</h3>
-          <p><strong>Autor(a):</strong> ${encomenda.autor || "---"}</p>
-          <p><strong>E-mail:</strong> ${encomenda.email || "---"}</p>
-          <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa || "---"}</p>
-          <p><strong>Status:</strong> ${encomenda.status || "---"}</p>
-        </div>
-      `;
-    }
-
     async function buscarPorCodigo() {
-      const codigo = document.getElementById("codigo").value.trim();
+      const codigo = document.getElementById("codigo").value.trim().toUpperCase();
       if (!codigo) return alert("Digite o código de rastreio.");
 
-      resultado.innerHTML = `<p>🔄 Buscando...</p>`;
-      resultado.style.display = "block";
-
-      const { data, error } = await supabase
-        .from("encomendas")
-        .select("*")
-        .eq("codigo_rastreio", codigo)
-        .single();
-
-      if (error || !data) {
-        resultado.innerHTML = "❌ Nenhum pedido encontrado com esse código.";
-      } else {
-        resultado.innerHTML = formatarPedido(data);
-      }
-
-      resultado.scrollIntoView({ behavior: "smooth" });
+      // Redireciona para página de status com o código
+      window.location.href = `status.html?codigo=${codigo}`;
     }
 
     async function buscarPorEmail() {
       const email = document.getElementById("email").value.trim();
       if (!email) return alert("Digite o e-mail.");
 
-      resultado.innerHTML = `<p>🔄 Buscando...</p>`;
+      resultado.innerHTML = `<p>🔄 Buscando encomendas...</p>`;
       resultado.style.display = "block";
 
       const { data, error } = await supabase
         .from("encomendas")
-        .select("*")
+        .select("titulo, codigo_rastreio")
         .eq("email", email)
         .order("data_envio", { ascending: false });
 
       if (error || !data || data.length === 0) {
-        resultado.innerHTML = "❌ Nenhum pedido encontrado para esse e-mail.";
-      } else {
-        resultado.innerHTML = data.map(formatarPedido).join("");
+        resultado.innerHTML = `<p>❌ Nenhum pedido encontrado para esse e-mail.</p>`;
+        return;
       }
+
+      resultado.innerHTML = "<h3>📚 Suas Encomendas:</h3><ul style='padding-left: 1rem;'>"
+        + data.map(pedido => `
+          <li style="margin: 0.5rem 0;">
+            <a href="status.html?codigo=${pedido.codigo_rastreio}" class="botao-verde">
+              ${pedido.titulo || "Título não informado"}
+            </a>
+          </li>
+        `).join("") +
+        "</ul>";
 
       resultado.scrollIntoView({ behavior: "smooth" });
     }
 
+    window.buscarPorCodigo = buscarPorCodigo;
+    window.buscarPorEmail = buscarPorEmail;
   </script>
 </body>
 </html>
