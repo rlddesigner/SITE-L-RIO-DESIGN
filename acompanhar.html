@@ -109,19 +109,19 @@
 
     const resultado = document.getElementById("resultado");
 
-    function formatarPedido(pedido) {
-      return `
-        <div style="margin-bottom: 1.5rem;">
-          <p><strong>Nome:</strong> ${pedido.autor}</p>
-          <p><strong>E-mail:</strong> ${pedido.email}</p>
-          <p><strong>Título do Livro:</strong> ${pedido.titulo}</p>
-          <p><strong>Tipo de Capa:</strong> ${pedido.tipo_capa}</p>
-          <p><strong>Status:</strong> ${pedido.status}</p>
-          <p><strong>Código de Rastreio:</strong> ${pedido.codigo_rastreio}</p>
-          <hr>
-        </div>
-      `;
-    }
+    function formatarPedido(data) {
+  return `
+    <div style="margin-bottom: 1.5rem;">
+      <p><strong>Nome:</strong> ${data.autor || '---'}</p>
+      <p><strong>E-mail:</strong> ${data.email || '---'}</p>
+      <p><strong>Título do Livro:</strong> ${data.titulo || '---'}</p>
+      <p><strong>Tipo de Capa:</strong> ${data.tipo_capa || '---'}</p>
+      <p><strong>Status:</strong> ${data.status || '---'}</p>
+      <p><strong>Código de Rastreio:</strong> ${data.codigo_rastreio || '---'}</p>
+      <hr>
+    </div>
+  `;
+}
 
     async function buscarPorCodigo() {
       const codigo = document.getElementById("codigo").value.trim();
