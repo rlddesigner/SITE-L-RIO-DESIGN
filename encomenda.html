@@ -81,9 +81,9 @@
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
   const supabase = createClient(
-  'https://tcnonaprqfcpqmscrbkg.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-);
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+  );
 
   emailjs.init('avKNQkuVniC59Omdz');
 
@@ -101,7 +101,6 @@
     dados.status = "aguardando confirmação";
     dados.data_envio = new Date().toISOString();
 
-    // Calcular preço
     let precoCalculado = 0;
     if (dados.tipo_capa === "ebook") precoCalculado = 60;
     else if (dados.tipo_capa === "fisica") precoCalculado = dados.orelhas === "sim" ? 40 : 25;
@@ -111,41 +110,32 @@
     const { error } = await supabase.from("encomendas").insert([dados]);
 
     if (error) {
-  alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
-  console.error("Erro Supabase:", error); // <-- adicione isso aqui pra ver o que tá rolando
-  return;
-}
+      alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
+      console.error("Erro Supabase:", error);
+      return;
+    }
 
-// Gerar o link de confirmação
-const linkConfirmacao = `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}&confirmar=sim`;
-
-// Enviar e-mail com EmailJS
-
-try {
-  console.log("Enviando email...");
-  const response = await emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
-    nome: dados.autor,
-    email: dados.email,
-    titulo: dados.titulo,
-    tipo_capa: dados.tipo_capa,
-    codigo_rastreio: codigo_rastreio,
-    preco: precoCalculado,
-    link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}`
-  });
-  console.log("📬 E-mail enviado com sucesso!", response);
-
-  // Agora sim redireciona
-  window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
-} catch (error) {
-  console.error("❌ Erro ao enviar e-mail:", error);
-  alert("Erro ao enviar e-mail. Tente novamente.");
-}
+    // Enviar e-mail
+    try {
+      const response = await emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
+        nome: dados.autor,
+        email: dados.email,
+        titulo: dados.titulo,
+        tipo_capa: dados.tipo_capa,
+        codigo_rastreio: codigo_rastreio,
+        preco: precoCalculado,
+        link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}&confirmar=sim`
+      });
+      console.log("📬 E-mail enviado com sucesso!", response);
+    } catch (error) {
+      console.error("❌ Erro ao enviar e-mail:", error);
+      alert("Erro ao enviar e-mail. Tente novamente.");
+    }
 
     // Redirecionar
     window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
   });
 </script>
-
 
   <script>
     let etapaAtual = 1;
