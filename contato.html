@@ -28,18 +28,19 @@
       <h2>Fale comigo 🌷</h2>
       <p>Vai ser um prazer te ouvir! Seja para trocar ideias, tirar dúvidas, começar um projeto juntos ou só pra dar um “oi”, meu cantinho está sempre aberto.</p>
   
-      <form class="formulario">
-        <label for="nome">Nome:</label>
+      <form id="form-contato" class="formulario">
+        <label for="nome">Seu nome:</label>
         <input type="text" id="nome" name="nome" required>
-  
-        <label for="email">E-mail:</label>
+      
+        <label for="email">Seu e-mail:</label>
         <input type="email" id="email" name="email" required>
-  
-        <label for="mensagem">Mensagem:</label>
-        <textarea id="mensagem" name="mensagem" rows="5" required></textarea>
-  
-        <button type="submit">Enviar ✉️</button>
+      
+        <label for="mensagem">Sua mensagem:</label>
+        <textarea id="mensagem" name="mensagem" rows="4" required></textarea>
+      
+        <button type="submit">Enviar mensagem ✉️</button>
       </form>
+      
   
       <div class="contato-direto">
         <p><strong>Email:</strong> <a href="mailto:lliriodesign@gmail.com">lliriodesign@gmail.com</a></p>
@@ -62,5 +63,33 @@
     </div>
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  
+    document.getElementById("form-contato").addEventListener("submit", async function (e) {
+      e.preventDefault();
+  
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+      const mensagem = document.getElementById("mensagem").value;
+  
+      const { error } = await supabase.from("contatos").insert([
+        { nome, email, mensagem }
+      ]);
+  
+      if (error) {
+        alert("Algo deu errado 😢");
+        console.error(error);
+      } else {
+        alert("Mensagem enviada com sucesso! ✨");
+        document.getElementById("form-contato").reset();
+      }
+    });
+  </script>
+  
+
 </body>
 </html>
