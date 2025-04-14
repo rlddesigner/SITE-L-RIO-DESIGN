@@ -27,48 +27,46 @@
     <section class="encomenda-container">
       <h2>Encomende sua capa 💌</h2>
       <p>Que alegria que você chegou até aqui! Este formulário é o primeiro passo para dar vida à sua história com uma capa feita com carinho e sensibilidade. Preencha com calma, quanto mais detalhes, melhor! 🌼</p>
-  
+
       <form id="form-encomenda" class="formulario">
         <label for="nome">Nome do Autor(a):</label>
         <input type="text" id="nome" name="nome" required>
-  
+
         <label for="email">Seu e-mail:</label>
         <input type="email" id="email" name="email" required>
-  
+
         <label for="instagram">Instagram (opcional):</label>
         <input type="text" id="instagram" name="instagram">
-  
+
         <label for="titulo_livro">Título do livro:</label>
-<input type="text" id="titulo_livro" name="titulo_livro" required>
-  
+        <input type="text" id="titulo_livro" name="titulo_livro" required>
+
         <label for="sinopse">Sinopse ou resumo da história:</label>
         <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
-  
+
         <label for="genero">Gênero literário:</label>
         <input type="text" id="genero" name="genero" required>
-  
+
         <label for="referencias">Referências visuais (descrições ou links de inspirações):</label>
         <textarea id="referencias" name="referencias" rows="4"></textarea>
-  
+
         <label for="cores">Cores preferidas ou que deseja evitar:</label>
         <input type="text" id="cores" name="cores">
-  
+
         <label for="observacoes">Alguma observação extra?</label>
         <textarea id="observacoes" name="observacoes" rows="3"></textarea>
 
         <p>Tipo de capa:</p>
-<label><input type="radio" name="tipo_capa" value="eBook"> eBook</label>
-<label><input type="radio" name="tipo_capa" value="Física"> Física</label>
-<label><input type="radio" name="tipo_capa" value="Ambas"> Ambas</label>
+        <label><input type="radio" name="tipo_capa" value="eBook"> eBook</label>
+        <label><input type="radio" name="tipo_capa" value="Física"> Física</label>
+        <label><input type="radio" name="tipo_capa" value="Ambas"> Ambas</label>
 
-  
         <button type="submit">Enviar pedido ✨</button>
       </form>
-  
+
       <p class="agradecimento">Obrigada por confiar em mim! Em breve entrarei em contato 💖</p>
     </section>
   </main>
-  
 
   <!-- Rodapé -->
   <footer class="rodape">
@@ -80,38 +78,40 @@
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
 
-  <!-- Script do Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <!-- Supabase Script -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-<script>
-  const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    document.getElementById("form-encomenda").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-  document.getElementById("form-encomenda").addEventListener("submit", async function (e) {
-    e.preventDefault();
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+      const instagram = document.getElementById("instagram").value;
+      const titulo_livro = document.getElementById("titulo_livro").value;
+      const sinopse = document.getElementById("sinopse").value;
+      const genero = document.getElementById("genero").value;
+      const referencias = document.getElementById("referencias").value;
+      const cores = document.getElementById("cores").value;
+      const observacoes = document.getElementById("observacoes").value;
+      const tipo_capa = document.querySelector('input[name="tipo_capa"]:checked')?.value || "";
 
-    const nome = document.getElementById("nome").value;
-    const email = document.getElementById("email").value;
-    const titulo = document.getElementById("titulo_livro").value;
-    const genero = document.getElementById("genero").value;
-    const sinopse = document.getElementById("sinopse").value;
-    const referencias = document.getElementById("referencias").value;
-    const tipo_capa = document.querySelector('input[name="tipo_capa"]:checked')?.value || "";
+      const { error } = await supabase.from("encomendas").insert([
+        { nome, email, instagram, titulo_livro, sinopse, genero, referencias, cores, observacoes, tipo_capa }
+      ]);
 
-    const { error } = await supabase.from("encomendas").insert([
-      { nome, email, titulo_livro: titulo, genero, sinopse, referencias, tipo_capa }
-    ]);
-
-    if (error) {
-      alert("Ops! Algo deu errado 😢");
-      console.error(error);
-    } else {
-      alert("Sua encomenda foi enviada com sucesso! 💌");
-      document.getElementById("form-encomenda").reset();
-    }
-  });
-</script>
+      if (error) {
+        alert("Ops! Algo deu errado 😢");
+        console.error(error);
+      } else {
+        alert("Sua encomenda foi enviada com sucesso! 💌");
+        document.getElementById("form-encomenda").reset();
+      }
+    });
+  </script>
 
 </body>
 </html>
