@@ -141,22 +141,6 @@ try {
   alert("Erro ao enviar e-mail. Tente novamente.");
 }
 
-
-await emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
-  nome: dados.autor,
-  email: dados.email,
-  titulo: dados.titulo,
-  tipo_capa: dados.tipo_capa,
-  codigo_rastreio: codigo_rastreio,
-  preco: precoCalculado,
-  link_confirmacao: `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}`
-
-}).then(() => {
-  console.log("📩 E-mail enviado com sucesso!");
-}).catch((err) => {
-  console.error("Erro ao enviar e-mail:", err);
-});
-
     // Redirecionar
     window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
   });
