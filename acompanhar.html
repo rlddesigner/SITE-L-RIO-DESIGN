@@ -92,10 +92,17 @@
       resultado.innerHTML = `
         <h2>Status da Encomenda</h2>
         <p><strong>Nome:</strong> ${encomenda.nome}</p>
+        <p><strong>E-mail:</strong> ${encomenda.email}</p>
         <p><strong>Título do Livro:</strong> ${encomenda.titulo_livro}</p>
+        <p><strong>Gênero:</strong> ${encomenda.genero}</p>
+        <p><strong>Sinopse:</strong> ${encomenda.sinopse}</p>
+        <p><strong>Referências:</strong> ${encomenda.referencias || 'Não informado'}</p>
+        <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa}</p>
+        <hr>
         <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
-        <p><strong>Posição na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} na frente</p>
-        <p><strong>Previsão de entrega:</strong> em aproximadamente ${diasEstimados || 1} dia(s) ✨</p>
+        <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
+        <p><strong>Previsão de entrega:</strong> aproximadamente ${diasEstimados || 1} dia(s) úteis ✨</p>
+        <p style="margin-top: 20px;">📬 <em>O projeto final será entregue via e-mail assim que estiver pronto. Fique de olho na sua caixa de entrada!</em></p>
       `;
 
       resultado.scrollIntoView({ behavior: 'smooth' });
