@@ -157,6 +157,8 @@
       } else {
         resultado.innerHTML = formatarPedido(data);
       }
+
+      resultado.scrollIntoView({ behavior: "smooth" });
     }
 
     async function buscarPorEmail() {
@@ -177,7 +179,10 @@
       } else {
         resultado.innerHTML = data.map(formatarPedido).join("");
       }
+
+      resultado.scrollIntoView({ behavior: "smooth" });
     }
+
   </script>
 </body>
 </html>
