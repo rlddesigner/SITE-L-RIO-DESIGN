@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Encomendas - Lírio D. Design</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    td.status-pendente {
+      color: #c92a2a;
+      font-weight: bold;
+    }
+    td.status-finalizada {
+      color: #2b8a3e;
+      font-weight: bold;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Painel de Encomendas 🌸</h1>
+  <table id="tabela-encomendas">
+    <thead>
+      <tr>
+        <th>Autor(a)</th>
+        <th>Título</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody id="lista-encomendas">
+      <!-- Linhas vão ser geradas aqui -->
+    </tbody>
+  </table>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    const lista = document.getElementById("lista-encomendas")
+
+    async function carregarEncomendas() {
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("*")
+        .order("data_envio", { ascending: false })
+
+      if (error) {
+        console.error("Erro ao buscar encomendas:", error)
+        return
+      }
+
+      lista.innerHTML = ""
+
+      data.forEach(encomenda => {
+        const linha = document.createElement("tr")
+
+        linha.innerHTML = `
+          <td>${encomenda.nome}</td>
+          <td>${encomenda.titulo_livro}</td>
+          <td>${encomenda.email}</td>
+          <td class="status-${encomenda.status}">${encomenda.status}</td>
+          <td>
+            <button onclick="atualizarStatus('${encomenda.id}', 'finalizada')">Finalizar</button>
+          </td>
+        `
+
+        lista.appendChild(linha)
+      })
+    }
+
+    window.atualizarStatus = async (id, novoStatus) => {
+      const { error } = await supabase
+        .from("encomendas")
+        .update({ status: novoStatus })
+        .eq("id", id)
+
+      if (error) {
+        alert("Erro ao atualizar status 😢")
+        console.error(error)
+      } else {
+        alert("Status atualizado com sucesso! 🎉")
+        carregarEncomendas()
+      }
+    }
+
+    carregarEncomendas()
+  </script>
+</body>
+</html>
