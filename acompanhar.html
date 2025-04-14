@@ -5,6 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acompanhar Encomenda ✨</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .acompanhar-container {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: #fffaf7;
+      border: 2px solid #ffeedf;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
+    }
+
+    .acompanhar-container h1 {
+      font-size: 1.8rem;
+      color: #217c67;
+      margin-bottom: 2rem;
+    }
+
+    .acompanhar-container input[type="text"],
+    .acompanhar-container input[type="email"] {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .acompanhar-container button {
+      background-color: #217c67;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .acompanhar-container button:hover {
+      background-color: #1c6654;
+    }
+
+    .resultado {
+      margin-top: 2rem;
+      text-align: left;
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+  </style>
 </head>
 <body>
   <!-- Cabeçalho -->
@@ -22,15 +74,19 @@
     </nav>
   </header>
 
-  <main class="acompanhar">
-    <section class="acompanhar-container">
-      <h1>Acompanhar Encomenda 📬</h1>
-      <div id="input-container">
-        <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
-        <button onclick="buscarEncomenda()">Ver Status</button>
-      </div>
-      <div id="resultado" class="resultado" style="display: none;"></div>
-    </section>
+  <main class="acompanhar-container">
+    <h1>📦 Acompanhe seu Pedido</h1>
+    <p>Digite o <strong>código de rastreio</strong> para um pedido específico ou seu <strong>e-mail</strong> para ver todos os seus pedidos.</p>
+
+    <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
+    <button onclick="buscarPorCodigo()">🔍 Ver Pedido</button>
+
+    <hr style="margin: 2rem 0;">
+
+    <input type="email" id="email" placeholder="Digite seu e-mail para ver todos os pedidos">
+    <button onclick="buscarPorEmail()">📧 Buscar por E-mail</button>
+
+    <div id="resultado" class="resultado" style="display: none;"></div>
   </main>
 
   <!-- Rodapé -->
@@ -51,90 +107,60 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const codigoURL = urlParams.get("codigo");
-    const codigoInput = document.getElementById('codigo');
+    const resultado = document.getElementById("resultado");
 
-    if (codigoURL) {
-      document.getElementById("input-container").style.display = "none";
-      buscarEncomenda(codigoURL);
+    function formatarPedido(pedido) {
+      return `
+        <div style="margin-bottom: 1.5rem;">
+          <p><strong>Nome:</strong> ${pedido.autor}</p>
+          <p><strong>E-mail:</strong> ${pedido.email}</p>
+          <p><strong>Título do Livro:</strong> ${pedido.titulo}</p>
+          <p><strong>Tipo de Capa:</strong> ${pedido.tipo_capa}</p>
+          <p><strong>Status:</strong> ${pedido.status}</p>
+          <p><strong>Código de Rastreio:</strong> ${pedido.codigo_rastreio}</p>
+          <hr>
+        </div>
+      `;
     }
 
-    function adicionarDiasUteis(data, dias) {
-      const novaData = new Date(data);
-      let adicionados = 0;
-      while (adicionados < dias) {
-        novaData.setDate(novaData.getDate() + 1);
-        const diaSemana = novaData.getDay();
-        if (diaSemana !== 0 && diaSemana !== 6) {
-          adicionados++;
-        }
-      }
-      return novaData;
-    }
+    async function buscarPorCodigo() {
+      const codigo = document.getElementById("codigo").value.trim();
+      if (!codigo) return alert("Digite o código de rastreio.");
 
-    function formatarData(data) {
-      return data.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-      });
-    }
+      resultado.innerHTML = "Buscando...";
+      resultado.style.display = "block";
 
-    async function buscarEncomenda(codigoManual) {
-      const codigo = (codigoManual || codigoInput.value.trim()).toUpperCase().trim();
-      const resultado = document.getElementById('resultado');
-      resultado.style.display = 'block';
-      resultado.innerHTML = `<p>🔎 Buscando informações para o código: <strong>${codigo}</strong>...</p>`;
-
-      if (!codigo) {
-        resultado.innerHTML = '<p class="erro">Por favor, digite o código de rastreio.</p>';
-        return;
-      }
-
-      const { data: encomenda, error } = await supabase
-        .from('encomendas')
-        .select('*')
-        .eq('codigo_rastreio', codigo)
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("*")
+        .eq("codigo_rastreio", codigo)
         .single();
 
-      if (error || !encomenda) {
-        resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😞</p>';
-        return;
+      if (error || !data) {
+        resultado.innerHTML = "❌ Nenhum pedido encontrado com esse código.";
+      } else {
+        resultado.innerHTML = formatarPedido(data);
       }
+    }
 
-      const { data: todas } = await supabase
-        .from('encomendas')
-        .select('*')
-        .order('data_envio', { ascending: true });
+    async function buscarPorEmail() {
+      const email = document.getElementById("email").value.trim();
+      if (!email) return alert("Digite o e-mail.");
 
-      const posicao = todas.findIndex(e => e.codigo_rastreio === codigo) + 1;
-      const pendentesAntes = todas.slice(0, posicao - 1).filter(e => e.status !== 'finalizada').length;
+      resultado.innerHTML = "Buscando...";
+      resultado.style.display = "block";
 
-      const diasEstimados = pendentesAntes * 3 + 3; // Mínimo de 3 dias úteis
-      const agora = new Date();
-      const hora = agora.getHours();
-      const inicioContagem = (hora < 12) ? agora : adicionarDiasUteis(agora, 1);
-      const dataPrevista = adicionarDiasUteis(inicioContagem, diasEstimados);
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("*")
+        .eq("email", email)
+        .order("data_envio", { ascending: false });
 
-      resultado.innerHTML = `
-        <h2>Status da Encomenda</h2>
-        <p><strong>Nome:</strong> ${encomenda.autor || '---'}</p>
-        <p><strong>E-mail:</strong> ${encomenda.email || '---'}</p>
-        <p><strong>Título do Livro:</strong> ${encomenda.titulo || '---'}</p>
-        <p><strong>Gênero:</strong> ${encomenda.genero || '---'}</p>
-        <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa || '---'}</p>
-        <hr>
-        <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
-        <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
-        <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrevista)}</strong> ✨</p>
-        <p class="info-final">
-          ⏳ Esta é uma previsão estimada com base na fila atual. Mas não se preocupe: posso entregar sua capa antes do prazo!<br>
-          O prazo informado é o limite máximo para entrega com carinho. 💖
-        </p>
-      `;
-
-      resultado.scrollIntoView({ behavior: 'smooth' });
+      if (error || !data.length) {
+        resultado.innerHTML = "❌ Nenhum pedido encontrado para esse e-mail.";
+      } else {
+        resultado.innerHTML = data.map(formatarPedido).join("");
+      }
     }
   </script>
 </body>
