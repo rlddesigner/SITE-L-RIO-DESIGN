@@ -50,8 +50,10 @@
 <body>
   <h1>Acompanhar Encomenda 💌</h1>
 
-  <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
-  <button onclick="buscarEncomenda()">Ver Status</button>
+  <div id="input-container">
+    <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
+    <button onclick="buscarEncomenda()">Ver Status</button>
+  </div>
 
   <div id="resultado" class="resultado" style="display: none;"></div>
 
@@ -63,8 +65,17 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
 
-    async function buscarEncomenda() {
-      const codigo = document.getElementById('codigo').value.trim();
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigoURL = urlParams.get("codigo");
+    const codigoInput = document.getElementById('codigo');
+
+    if (codigoURL) {
+      document.getElementById("input-container").style.display = "none";
+      buscarEncomenda(codigoURL);
+    }
+
+    async function buscarEncomenda(codigoManual) {
+      const codigo = codigoManual || codigoInput.value.trim();
       const resultado = document.getElementById('resultado');
       resultado.style.display = 'block';
 
@@ -73,23 +84,33 @@
         return;
       }
 
-      const { data, error } = await supabase
+      const { data: encomenda, error } = await supabase
         .from('encomendas')
         .select('*')
         .eq('codigo_rastreio', codigo)
         .single();
 
-      if (error || !data) {
+      if (error || !encomenda) {
         resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😢</p>';
         return;
       }
 
+      const { data: todas } = await supabase
+        .from('encomendas')
+        .select('*')
+        .order('data_envio', { ascending: true });
+
+      const posicao = todas.findIndex(e => e.codigo_rastreio === codigo) + 1;
+      const pendentesAntes = todas.slice(0, posicao - 1).filter(e => e.status !== 'finalizada').length;
+      const diasEstimados = pendentesAntes * 3; // 3 dias por encomenda (ajustável)
+
       resultado.innerHTML = `
         <h2>Status da Encomenda</h2>
-        <p><strong>Nome:</strong> ${data.nome}</p>
-        <p><strong>Título do Livro:</strong> ${data.titulo_livro}</p>
-        <p><strong>Gênero:</strong> ${data.genero}</p>
-        <p><strong>Status:</strong> <em>${data.status}</em></p>
+        <p><strong>Nome:</strong> ${encomenda.nome}</p>
+        <p><strong>Título do Livro:</strong> ${encomenda.titulo_livro}</p>
+        <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
+        <p><strong>Posição na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} na frente</p>
+        <p><strong>Previsão de entrega:</strong> em aproximadamente ${diasEstimados || 1} dia(s) ✨</p>
       `;
     }
   </script>
