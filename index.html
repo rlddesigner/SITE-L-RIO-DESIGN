@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lírio D. Design</title>
+        <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+      </head>      
+<body>
+    <header>
+        <div class="topo-site">
+          <img src="assets/logo.png" alt="Logo Lírio D. Design" class="logo">
+        </div>
+        <nav class="menu-principal">
+            <ul>
+                <li><a href="index.html">✿ Início</a></li>
+                <li><a href="sobre.html">✿ Sobre</a></li>
+                <li><a href="portfolio.html">✿ Portfólio</a></li>
+                <li><a href="servicos.html">✿ Serviços</a></li>
+                <li><a href="contato.html">✿ Contato</a></li>
+              </ul>
+          </nav>
+      </header>
+
+  <main>
+    <!-- HERO SECTION - destaque inicial -->
+
+    <div class="decoracao-florzinhas">❀ ❀ ❀ ❀ ❀</div>
+
+
+    <section class="boas-vindas">
+      <p>“Aqui, cada detalhe conta uma história bonita.”</p>
+    </section>
+
+<!-- GALERIA DESTAQUE DE CAPAS -->
+<section class="galeria-destaque florzinhas">
+  <h2 class="titulo-secao">🌼 Destaques do meu portfólio</h2>
+  <div class="mockup-gallery">
+    <a href="https://www.amazon.com.br/dp/B0F1CJM41L" target="_blank" class="item cintilante">
+      <img src="assets/capa/capa 46.jpg" alt="Capa 46">
+      <span class="btn-leia">Leia aqui</span>
+    </a>
+    <a href="https://www.amazon.com.br/dp/B0DYYY7WRV" target="_blank" class="item cintilante">
+      <img src="assets/capa/capa 45.jpg" alt="Capa 45">
+      <span class="btn-leia">Leia aqui</span>
+    </a>
+    <a href="https://www.amazon.com.br/dp/B0F2SY44H7" target="_blank" class="item cintilante">
+      <img src="assets/capa/capa 44.jpg" alt="Capa 44">
+      <span class="btn-leia">Leia aqui</span>
+    </a>
+  </div>
+  <canvas id="floresCanvas"></canvas>
+</section>
+
+<section class="hero">
+  <h1 class="fade-in">Design que floresce ideias ✨</h1>
+  <p class="fade-in-delay">Criações autênticas com personalidade e propósito.</p>
+  <a href="portfolio.html" class="btn-principal">Conheça meu trabalho</a>
+</section>
+
+<!-- DEPOIMENTO FOFO -->
+<section class="depoimento">
+  <p>“Minha capa ficou ainda mais linda do que eu imaginava! A Lis é maravilhosa ✨”<br>
+  <span> — @autorafeliz</span>
+  </p>
+</section>
+
+<!-- CHAMADA PARA ENCOMENDA -->
+<section class="chamada-encomenda">
+  <h2>Pronta para dar vida à sua história?</h2>
+  <a href="encomenda.html" class="btn-encomenda">💌 Fazer encomenda</a>
+</section>
+
+<!-- ANIMAÇÕES E ESTILOS (CSS sugerido) -->
+<style>
+.hero {
+  background-color: #fff;
+  padding: 80px 20px;
+  text-align: center;
+}
+.hero h1 {
+  color: #2e7d5b;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+.btn-principal {
+  background-color: #F27C46;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.galeria-destaque {
+  background: #FFF9F4;
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.mockup-gallery {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.mockup-gallery .item {
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.mockup-gallery .item img {
+  width: 180px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+.mockup-gallery .item:hover img {
+  transform: scale(1.08);
+}
+.mockup-gallery .btn-leia {
+  margin-top: 8px;
+  background-color: #F27C46;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.cintilante::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  animation: shine 2s infinite;
+  border-radius: 16px;
+  z-index: 1;
+}
+@keyframes shine {
+  0% { left: -75%; }
+  100% { left: 125%; }
+}
+.titulo-secao {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #2e7d5b;
+}
+.depoimento {
+  background-color: #fef6ef;
+  padding: 40px 30px;
+  font-style: italic;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #555;
+}
+.depoimento span {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #2e7d5b;
+}
+.chamada-encomenda {
+  background-color: #ffe8d9;
+  text-align: center;
+  padding: 50px 20px;
+}
+.chamada-encomenda h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  color: #da743c;
+}
+.btn-encomenda {
+  background-color: #F27C46;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.fade-in {
+  animation: fadeIn 1.5s ease forwards;
+  opacity: 0;
+}
+.fade-in-delay {
+  animation: fadeIn 2s ease forwards;
+  opacity: 0;
+  animation-delay: 0.5s;
+}
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+canvas#floresCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+</style>
+
+<!-- SCRIPT DAS FLORZINHAS -->
+<script>
+window.onload = function () {
+  const canvas = document.getElementById("floresCanvas");
+  const ctx = canvas.getContext("2d");
+  let width, height;
+  let petals = [];
+  const flowerEmoji = "❀";
+
+  function resize() {
+    width = canvas.width = document.querySelector('.galeria-destaque').offsetWidth;
+    height = canvas.height = document.querySelector('.galeria-destaque').offsetHeight;
+  }
+
+  function createPetals(count) {
+    petals = [];
+    for (let i = 0; i < count; i++) {
+      petals.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 20 + 14,
+        speed: Math.random() * 1 + 0.5,
+        rotation: Math.random() * 360
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    for (let p of petals) {
+      ctx.save();
+      ctx.font = `${p.size}px serif`;
+      ctx.fillStyle = "#f2a57d";
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.fillText(flowerEmoji, 0, 0);
+      ctx.restore();
+      p.y += p.speed;
+      p.rotation += 1;
+      if (p.y > height) {
+        p.y = -30;
+        p.x = Math.random() * width;
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  createPetals(25);
+  draw();
+  window.addEventListener("resize", () => {
+    resize();
+    createPetals(25);
+  });
+};
+</script>
+  
+  </main>
+
+  <section class="instagram-carousel">
+    <h2>🌸 Últimos posts do Instagram</h2>
+    <div class="carousel-container">
+      <a href="https://www.instagram.com/p/DHtzeEmyIPJ/" target="_blank">
+        <img src="assets/instagram/post1.jpg" alt="Post 1">
+      </a>
+      <a href="https://www.instagram.com/p/DH9ACPBxBIt/" target="_blank">
+        <img src="assets/instagram/post2.jpg" alt="Post 2">
+      </a>
+      <a href="https://www.instagram.com/p/DH9AdWvRb8e/" target="_blank">
+        <img src="assets/instagram/post3.jpg" alt="Post 3">
+      </a>
+      <a href="https://www.instagram.com/p/DH9BPWvRyUS/" target="_blank">
+        <img src="assets/instagram/post4.jpg" alt="Post 4">
+      </a>
+      <a href="https://www.instagram.com/p/SEULINKAQUI/" target="_blank">
+        <img src="assets/instagram/post5.jpg" alt="Post 5">
+      </a>
+    </div>
+    <a href="https://instagram.com/lliriodesign" target="_blank" class="btn-instagram">Ver mais no Instagram 💖</a>
+  </section>
+  
+
+  <footer class="rodape">
+    <div class="links-uteis">
+      <a href="termos.html">📄 Termos e Condições</a>
+      <a href="faq.html">❓ Perguntas Frequentes</a>
+      <a href="politica.html">🔒 Política de Privacidade</a>
+    </div>
+    <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
+  </footer>
+</body>
+</html>
