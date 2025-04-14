@@ -180,39 +180,65 @@
     }
   </script>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import emailjs from 'https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';
 
-  const supabase = createClient(
-    'https://tcnonaprqfcpqmscrbkg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-  );
+const supabase = createClient(
+  'https://tcnonaprqfcpqmscrbkg.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+);
 
-  const form = document.getElementById("form-encomenda");
+emailjs.init('avKNQkuVniC59Omdz'); // <-- sua Public Key
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+const form = document.getElementById("form-encomenda");
 
-    const formData = new FormData(form);
-    const dados = {};
-    formData.forEach((value, key) => dados[key] = value);
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-    const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
-    dados.codigo_rastreio = codigo_rastreio;
-    dados.status = "aguardando confirmação";
-    dados.data_envio = new Date().toISOString();
+  const formData = new FormData(form);
+  const dados = {};
+  formData.forEach((value, key) => dados[key] = value);
 
-    const { error } = await supabase.from("encomendas").insert([dados]);
+  const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+  dados.codigo_rastreio = codigo_rastreio;
+  dados.status = "aguardando confirmação";
+  dados.data_envio = new Date().toISOString();
 
-    if (error) {
-      alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
-      console.error(error);
-      return;
-    }
+  // 🧮 Cálculo de preço
+  let precoCalculado = 0;
+  if (dados.tipo_capa === "ebook") precoCalculado = 60;
+  else if (dados.tipo_capa === "fisica") precoCalculado = dados.orelhas === "sim" ? 40 : 25;
+  else if (dados.tipo_capa === "ambas") precoCalculado = 100;
 
-    // Redireciona após o envio
-    window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
+  // 💾 Inserir na Supabase
+  const { error } = await supabase.from("encomendas").insert([dados]);
+
+  if (error) {
+    alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
+    console.error(error);
+    return;
+  }
+
+  // 📧 Enviar o e-mail automático
+  emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
+    name: dados.nome,
+    email: dados.email,
+    titulo: dados.titulo,
+    tipo_capa: dados.tipo_capa,
+    codigo_rastreio: codigo_rastreio,
+    preco: precoCalculado
+  })
+  .then(() => {
+    console.log("📩 E-mail enviado com sucesso!");
+  })
+  .catch((err) => {
+    console.error("Erro ao enviar e-mail:", err);
   });
+
+  // ✅ Redireciona para a página de "Enviado"
+  window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
+});
+
 </script>
 
 </body>
