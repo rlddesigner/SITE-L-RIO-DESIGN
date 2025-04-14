@@ -116,19 +116,23 @@
   return;
 }
 
-    // Enviar e-mail com EmailJS
-    emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
-  nome: dados.autor, // ← agora sim!
+// Gerar o link de confirmação
+const linkConfirmacao = `https://lliriodesign.netlify.app/status.html?codigo=${codigo_rastreio}&confirmar=sim`;
+
+// Enviar e-mail com EmailJS
+emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
+  nome: dados.autor, // ← corrigido
   email: dados.email,
   titulo: dados.titulo,
   tipo_capa: dados.tipo_capa,
   codigo_rastreio: codigo_rastreio,
-  preco: precoCalculado
-    }).then(() => {
-      console.log("📩 E-mail enviado com sucesso!");
-    }).catch((err) => {
-      console.error("Erro ao enviar e-mail:", err);
-    });
+  preco: precoCalculado,
+  link_confirmacao: linkConfirmacao // ← ADICIONADO
+}).then(() => {
+  console.log("📩 E-mail enviado com sucesso!");
+}).catch((err) => {
+  console.error("Erro ao enviar e-mail:", err);
+});
 
     // Redirecionar
     window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
