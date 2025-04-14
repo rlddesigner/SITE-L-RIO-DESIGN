@@ -83,7 +83,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
   const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // use sua chave completa
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
   const form = document.getElementById("form-encomenda");
@@ -108,11 +108,13 @@
     const { error } = await supabase.from("encomendas").insert([dados]);
 
     if (error) {
-      alert("❌ Algo deu errado ao enviar sua encomenda.");
-      console.error("Erro Supabase:", error);
+      alert("❌ Erro ao enviar a encomenda. Verifique os dados ou tente novamente.");
+      console.error("Erro do Supabase:", error);
     } else {
-      alert("✅ Sua encomenda foi enviada com sucesso! Obrigada 💖");
+      alert("✅ Encomenda enviada com sucesso! Muito obrigada 💌");
       form.reset();
     }
   });
 </script>
+</body>
+</html>
