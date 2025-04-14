@@ -1,56 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acompanhe seu Pedido 📦</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Status da Encomenda 📦</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    .acompanhar-container {
-      max-width: 600px;
+    .status-container {
+      max-width: 700px;
       margin: 4rem auto;
       padding: 2rem;
       background-color: #fffaf7;
       border: 2px solid #ffeedf;
       border-radius: 15px;
-      text-align: center;
       box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
     }
-    input[type="text"], input[type="email"] {
-      width: 100%;
-      padding: 0.8rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #217c67;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      margin-top: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1c6654;
-    }
-    ul {
-      padding-left: 0;
-    }
-    li a {
+
+    .status-container h1 {
+      text-align: center;
       color: #217c67;
-      text-decoration: none;
     }
-    li a:hover {
-      text-decoration: underline;
-      color: #145f4f;
+
+    .pedido {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1.5rem;
     }
-    .resultado {
-      margin-top: 2rem;
-      text-align: left;
+
+    .pedido p {
+      margin: 0.5rem 0;
+    }
+
+    .info-final {
+      font-style: italic;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #555;
     }
   </style>
 </head>
@@ -70,23 +57,13 @@
     </nav>
   </header>
 
-  <!-- Conteúdo principal -->
-  <main class="acompanhar-container">
-    <h1>📦 Acompanhe seu Pedido</h1>
-    <p>Digite o <strong>código de rastreio</strong> para um pedido específico ou seu <strong>e-mail</strong> para ver todos os seus pedidos.</p>
-
-    <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
-    <button onclick="buscarPorCodigo()">🔍 Ver Pedido</button>
-
-    <hr style="margin: 2rem 0;">
-
-    <input type="email" id="email" placeholder="Digite seu e-mail para ver todos os pedidos">
-    <button onclick="buscarPorEmail()">📧 Buscar por E-mail</button>
-
-    <div id="resultado" class="resultado"></div>
+  <main class="status-container">
+    <h1>Status da sua Encomenda 💌</h1>
+    <div id="status-pedido">
+      <p>⏳ Buscando informações...</p>
+    </div>
   </main>
 
-  <!-- Rodapé -->
   <footer class="rodape">
     <div class="links-uteis">
       <a href="termos.html">📄 Termos e Condições</a>
@@ -96,7 +73,6 @@
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
 
-  <!-- Supabase Script -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -105,40 +81,59 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
 
-    const resultado = document.getElementById("resultado");
+    const statusContainer = document.getElementById("status-pedido");
+    const url = new URLSearchParams(window.location.search);
+    const codigo = url.get("codigo");
 
-    async function buscarPorCodigo() {
-      const codigo = document.getElementById("codigo").value.trim();
-      if (!codigo) return alert("Digite o código de rastreio.");
+    if (codigo) buscarPorCodigo(codigo);
+    else statusContainer.innerHTML = '<p class="erro">❌ Nenhum código informado.</p>';
 
-      window.location.href = `status.html?codigo=${codigo}`;
+    function formatarData(data) {
+      return new Date(data).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
     }
 
-    async function buscarPorEmail() {
-      const email = document.getElementById("email").value.trim();
-      if (!email) return alert("Digite o e-mail.");
-
+    async function buscarPorCodigo(cod) {
       const { data, error } = await supabase
-        .from("encomendas")
-        .select("titulo, codigo_rastreio, status")
-        .eq("email", email)
-        .order("data_envio", { ascending: false });
+        .from('encomendas')
+        .select('*')
+        .eq('codigo_rastreio', cod)
+        .single();
 
-      if (error || !data || data.length === 0) {
-        resultado.innerHTML = "❌ Nenhum pedido encontrado para esse e-mail.";
+      if (error || !data) {
+        statusContainer.innerHTML = '<p class="erro">❌ Nenhum pedido encontrado com esse código.</p>';
         return;
       }
 
-      resultado.innerHTML = "<h3>📚 Seus pedidos:</h3><ul style='list-style: none;'>";
-      data.forEach(pedido => {
-        resultado.innerHTML += `
-          <li style="margin: 0.8rem 0;">
-            <a href="status.html?codigo=${pedido.codigo_rastreio}">📖 ${pedido.titulo || "(Sem título)"}</a><br>
-            <span style="font-size: 0.9rem; color: #888;">Status: ${pedido.status}</span>
-          </li>
-        `;
-      });
-      resultado.innerHTML += "</ul>";
+      const anteriores = await contarAnteriores(data.data_envio);
+      const diasEstimados = (anteriores * 3) + 3;
+      let dataPrev = new Date(data.data_envio);
+      let dias = 0;
+      while (dias < diasEstimados) {
+        dataPrev.setDate(dataPrev.getDate() + 1);
+        if (dataPrev.getDay() !== 0 && dataPrev.getDay() !== 6) dias++;
+      }
+
+      statusContainer.innerHTML = `
+        <div class="pedido">
+          <p><strong>Título:</strong> ${data.titulo || "---"}</p>
+          <p><strong>Autor(a):</strong> ${data.autor || "---"}</p>
+          <p><strong>Gênero:</strong> ${data.genero || "---"}</p>
+          <p><strong>E-mail:</strong> ${data.email || "---"}</p>
+          <p><strong>Status:</strong> ${data.status}</p>
+          <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrev)}</strong></p>
+          <p class="info-final">Essa é uma estimativa. Posso entregar antes do prazo 💖</p>
+          <p class="info-final">📧 Toda comunicação será feita via e-mail. Fique de olho na sua caixa de entrada!</p>
+        </div>
+      `;
+    }
+
+    async function contarAnteriores(dataEnvio) {
+      const { data } = await supabase.from("encomendas").select("data_envio");
+      return data.filter(item => new Date(item.data_envio) < new Date(dataEnvio)).length;
     }
   </script>
 </body>
