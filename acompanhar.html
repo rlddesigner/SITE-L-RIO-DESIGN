@@ -59,58 +59,89 @@
       buscarEncomenda(codigoURL);
     }
 
-    async function buscarEncomenda(codigoManual) {
-        const codigo = (codigoManual || codigoInput.value.trim()).toUpperCase().trim();
-document.getElementById('resultado').innerHTML = `<p>🔎 Buscando informações para o código: <strong>${codigo}</strong>...</p>`;
+    function adicionarDiasUteis(data, dias) {
+  const novaData = new Date(data);
+  let adicionados = 0;
 
-      const resultado = document.getElementById('resultado');
-      resultado.style.display = 'block';
-
-      if (!codigo) {
-        resultado.innerHTML = '<p class="erro">Por favor, digite o código de rastreio.</p>';
-        return;
-      }
-
-      const { data: encomenda, error } = await supabase
-        .from('encomendas')
-        .select('*')
-        .eq('codigo_rastreio', codigo)
-        .single();
-
-      if (error || !encomenda) {
-        resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😢</p>';
-        return;
-      }
-
-      const { data: todas } = await supabase
-        .from('encomendas')
-        .select('*')
-        .order('data_envio', { ascending: true });
-
-      const posicao = todas.findIndex(e => e.codigo_rastreio === codigo) + 1;
-      const pendentesAntes = todas.slice(0, posicao - 1).filter(e => e.status !== 'finalizada').length;
-      const diasEstimados = pendentesAntes * 3;
-
-      resultado.innerHTML = `
-        <h2>Status da Encomenda</h2>
-        <p><strong>Nome:</strong> ${encomenda.nome}</p>
-        <p><strong>E-mail:</strong> ${encomenda.email}</p>
-        <p><strong>Título do Livro:</strong> ${encomenda.titulo_livro}</p>
-        <p><strong>Gênero:</strong> ${encomenda.genero}</p>
-        <p><strong>Sinopse:</strong> ${encomenda.sinopse}</p>
-        <p><strong>Referências:</strong> ${encomenda.referencias || 'Não informado'}</p>
-        <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa}</p>
-        <hr>
-        <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
-        <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
-        <p><strong>Previsão de entrega:</strong> aproximadamente ${diasEstimados || 1} dia(s) úteis ✨</p>
-        <p class="info-final">
-  📬 O projeto final será entregue via e-mail assim que estiver pronto. Fique de olho na sua caixa de entrada!
-</p>
-      `;
-
-      resultado.scrollIntoView({ behavior: 'smooth' });
+  while (adicionados < dias) {
+    novaData.setDate(novaData.getDate() + 1);
+    const diaSemana = novaData.getDay();
+    if (diaSemana !== 0 && diaSemana !== 6) {
+      adicionados++;
     }
+  }
+
+  return novaData;
+}
+
+function formatarData(data) {
+  return data.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+}
+
+
+async function buscarEncomenda(codigoManual) {
+  const codigo = (codigoManual || codigoInput.value.trim()).toUpperCase().trim();
+  const resultado = document.getElementById('resultado');
+  resultado.style.display = 'block';
+  resultado.innerHTML = `<p>🔎 Buscando informações para o código: <strong>${codigo}</strong>...</p>`;
+
+  if (!codigo) {
+    resultado.innerHTML = '<p class="erro">Por favor, digite o código de rastreio.</p>';
+    return;
+  }
+
+  const { data: encomenda, error } = await supabase
+    .from('encomendas')
+    .select('*')
+    .eq('codigo_rastreio', codigo)
+    .single();
+
+  if (error || !encomenda) {
+    resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😢</p>';
+    return;
+  }
+
+  const { data: todas } = await supabase
+    .from('encomendas')
+    .select('*')
+    .order('data_envio', { ascending: true });
+
+  const posicao = todas.findIndex(e => e.codigo_rastreio === codigo) + 1;
+  const pendentesAntes = todas.slice(0, posicao - 1).filter(e => e.status !== 'finalizada').length;
+
+  const diasEstimados = pendentesAntes * 3;
+  const agora = new Date();
+  const hora = agora.getHours();
+
+  const inicioContagem = (hora < 12) ? agora : adicionarDiasUteis(agora, 1);
+  const dataPrevista = adicionarDiasUteis(inicioContagem, diasEstimados);
+
+  resultado.innerHTML = `
+    <h2>Status da Encomenda</h2>
+    <p><strong>Nome:</strong> ${encomenda.nome}</p>
+    <p><strong>E-mail:</strong> ${encomenda.email}</p>
+    <p><strong>Título do Livro:</strong> ${encomenda.titulo_livro}</p>
+    <p><strong>Gênero:</strong> ${encomenda.genero}</p>
+    <p><strong>Sinopse:</strong> ${encomenda.sinopse}</p>
+    <p><strong>Referências:</strong> ${encomenda.referencias || 'Não informado'}</p>
+    <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa}</p>
+    <hr>
+    <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
+    <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
+    <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrevista)}</strong> ✨</p>
+    <p class="info-final">
+      ⏳ Esta é uma previsão estimada com base na fila atual. Mas não se preocupe: posso entregar sua capa antes do prazo!  
+      O prazo informado é o limite máximo para entrega com carinho. 💖
+    </p>
+  `;
+
+  resultado.scrollIntoView({ behavior: 'smooth' });
+}
+
   </script>
 </body>
 </html>
