@@ -582,4 +582,50 @@
     font-size: 0.85rem;
     color: #bfa087;
   }
+  .resultado {
+    background-color: #fff0f4;
+    border: 2px solid #ffcce0;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 600px;
+    margin: 40px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+  }
+  
+  .resultado h2 {
+    text-align: center;
+    color: #ba5d82;
+    margin-bottom: 20px;
+  }
+  
+  .resultado p {
+    margin: 8px 0;
+  }
+  
+  .resultado p strong {
+    color: #444;
+  }
+  
+  .resultado hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+  }
+  
+  .resultado em {
+    color: #ba5d82;
+    font-style: normal;
+    font-weight: 500;
+  }
+  
+  .resultado .info-final {
+    margin-top: 25px;
+    font-style: italic;
+    color: #5c3d4f;
+    font-size: 15px;
+    text-align: center;
+  }
   

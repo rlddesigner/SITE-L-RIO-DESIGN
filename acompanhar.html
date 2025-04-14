@@ -104,7 +104,9 @@ document.getElementById('resultado').innerHTML = `<p>🔎 Buscando informações
         <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
         <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
         <p><strong>Previsão de entrega:</strong> aproximadamente ${diasEstimados || 1} dia(s) úteis ✨</p>
-        <p style="margin-top: 20px;">📬 <em>O projeto final será entregue via e-mail assim que estiver pronto. Fique de olho na sua caixa de entrada!</em></p>
+        <p class="info-final">
+  📬 O projeto final será entregue via e-mail assim que estiver pronto. Fique de olho na sua caixa de entrada!
+</p>
       `;
 
       resultado.scrollIntoView({ behavior: 'smooth' });
