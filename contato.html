@@ -62,11 +62,13 @@
     </div>
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  
     const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  
+    const supabase = createClient(supabaseUrl, supabaseKey);
   
     document.getElementById("form-contato").addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -87,7 +89,7 @@
         document.getElementById("form-contato").reset();
       }
     });
-  </script>
+  </script>  
   
 
 </body>
