@@ -56,6 +56,11 @@
       </form>
 
       <p class="agradecimento">Obrigada por confiar em mim! Em breve entrarei em contato 💖</p>
+
+      <!-- 👇 Cola aqui embaixo -->
+<div id="confirmacao" style="margin-top: 30px; display: none; background: #f0f0f0; padding: 20px; border-radius: 10px;">
+  <!-- Mensagem de sucesso vai aparecer aqui -->
+</div>
     </section>
   </main>
 
@@ -107,10 +112,13 @@
         alert("❌ Erro ao enviar. Verifique os dados ou tente novamente.");
         console.error("Erro Supabase:", error);
       } else {
-        alert("✅ Encomenda enviada com sucesso! 💌");
         form.reset();
-      }
-    });
+document.getElementById("confirmacao").style.display = "block";
+document.getElementById("confirmacao").innerHTML = `
+  <h3>✅ Encomenda enviada com sucesso!</h3>
+  <p>Seu código de rastreio é: <strong>${codigo_rastreio}</strong></p>
+  <p>Você pode acompanhar sua encomenda <a href="acompanhar.html">clicando aqui</a>.</p>
+`;
   </script>
 
 </body>
