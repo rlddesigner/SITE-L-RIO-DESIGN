@@ -75,6 +75,67 @@
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
 
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const supabase = createClient(
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' // sua real chave
+  );
+
+  emailjs.init('avKNQkuVniC59Omdz');
+
+  const form = document.getElementById("form-encomenda");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const dados = {};
+    formData.forEach((value, key) => dados[key] = value);
+
+    const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+    dados.codigo_rastreio = codigo_rastreio;
+    dados.status = "aguardando confirmação";
+    dados.data_envio = new Date().toISOString();
+
+    // Calcular preço
+    let precoCalculado = 0;
+    if (dados.tipo_capa === "ebook") precoCalculado = 60;
+    else if (dados.tipo_capa === "fisica") precoCalculado = dados.orelhas === "sim" ? 40 : 25;
+    else if (dados.tipo_capa === "ambas") precoCalculado = 100;
+
+    // Salvar na Supabase
+    const { error } = await supabase.from("encomendas").insert([dados]);
+
+    if (error) {
+      alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
+      console.error(error);
+      return;
+    }
+
+    // Enviar e-mail com EmailJS
+    emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
+      nome: dados.nome,
+      email: dados.email,
+      titulo: dados.titulo,
+      tipo_capa: dados.tipo_capa,
+      codigo_rastreio: codigo_rastreio,
+      preco: precoCalculado
+    }).then(() => {
+      console.log("📩 E-mail enviado com sucesso!");
+    }).catch((err) => {
+      console.error("Erro ao enviar e-mail:", err);
+    });
+
+    // Redirecionar
+    window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
+  });
+</script>
+
+
   <script>
     let etapaAtual = 1;
     const totalEtapas = 3;
@@ -179,67 +240,6 @@
       div.style.display = valor === "sim" ? "block" : "none";
     }
   </script>
-
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-import emailjs from 'https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js';
-
-const supabase = createClient(
-  'https://tcnonaprqfcpqmscrbkg.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-);
-
-emailjs.init('avKNQkuVniC59Omdz'); // <-- sua Public Key
-
-const form = document.getElementById("form-encomenda");
-
-form.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const formData = new FormData(form);
-  const dados = {};
-  formData.forEach((value, key) => dados[key] = value);
-
-  const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
-  dados.codigo_rastreio = codigo_rastreio;
-  dados.status = "aguardando confirmação";
-  dados.data_envio = new Date().toISOString();
-
-  // 🧮 Cálculo de preço
-  let precoCalculado = 0;
-  if (dados.tipo_capa === "ebook") precoCalculado = 60;
-  else if (dados.tipo_capa === "fisica") precoCalculado = dados.orelhas === "sim" ? 40 : 25;
-  else if (dados.tipo_capa === "ambas") precoCalculado = 100;
-
-  // 💾 Inserir na Supabase
-  const { error } = await supabase.from("encomendas").insert([dados]);
-
-  if (error) {
-    alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
-    console.error(error);
-    return;
-  }
-
-  // 📧 Enviar o e-mail automático
-  emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
-    name: dados.nome,
-    email: dados.email,
-    titulo: dados.titulo,
-    tipo_capa: dados.tipo_capa,
-    codigo_rastreio: codigo_rastreio,
-    preco: precoCalculado
-  })
-  .then(() => {
-    console.log("📩 E-mail enviado com sucesso!");
-  })
-  .catch((err) => {
-    console.error("Erro ao enviar e-mail:", err);
-  });
-
-  // ✅ Redireciona para a página de "Enviado"
-  window.location.href = `enviado.html?codigo=${codigo_rastreio}`;
-});
-
-</script>
 
 </body>
 </html>
