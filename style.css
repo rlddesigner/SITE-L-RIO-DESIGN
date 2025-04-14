@@ -762,3 +762,19 @@ h1 {
   font-size: 2em;
   color: #367c5a;
 }
+.botao-verde {
+  display: inline-block;
+  background-color: #4CAF50; /* verde suave */
+  color: white;
+  padding: 0.6rem 1.2rem;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.botao-verde:hover {
+  background-color: #3e8e41;
+}
