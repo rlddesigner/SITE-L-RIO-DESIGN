@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acompanhar Encomenda ✨</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+      background-color: #fff8f5;
+      color: #333;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ba5d82;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: #ba5d82;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .resultado {
+      margin-top: 30px;
+      background-color: #fff0f4;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .erro {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Acompanhar Encomenda 💌</h1>
+
+  <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
+  <button onclick="buscarEncomenda()">Ver Status</button>
+
+  <div id="resultado" class="resultado" style="display: none;"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+    );
+
+    async function buscarEncomenda() {
+      const codigo = document.getElementById('codigo').value.trim();
+      const resultado = document.getElementById('resultado');
+      resultado.style.display = 'block';
+
+      if (!codigo) {
+        resultado.innerHTML = '<p class="erro">Por favor, digite o código de rastreio.</p>';
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('encomendas')
+        .select('*')
+        .eq('codigo_rastreio', codigo)
+        .single();
+
+      if (error || !data) {
+        resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😢</p>';
+        return;
+      }
+
+      resultado.innerHTML = `
+        <h2>Status da Encomenda</h2>
+        <p><strong>Nome:</strong> ${data.nome}</p>
+        <p><strong>Título do Livro:</strong> ${data.titulo_livro}</p>
+        <p><strong>Gênero:</strong> ${data.genero}</p>
+        <p><strong>Status:</strong> <em>${data.status}</em></p>
+      `;
+    }
+  </script>
+</body>
+</html>

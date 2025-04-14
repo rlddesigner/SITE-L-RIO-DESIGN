@@ -80,19 +80,24 @@
     const form = document.getElementById("form-encomenda");
 
     form.addEventListener("submit", async function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const dados = {
-        nome: document.getElementById("nome").value,
-        email: document.getElementById("email").value,
-        titulo_livro: document.getElementById("titulo_livro").value,
-        sinopse: document.getElementById("sinopse").value,
-        genero: document.getElementById("genero").value,
-        referencias: document.getElementById("referencias").value,
-        tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
-        data_envio: new Date().toISOString(),
-        status: "pendente"
-      };
+  // Gera o código de rastreio tipo "ENCOM-123456"
+  const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+
+  const dados = {
+    nome: document.getElementById("nome").value,
+    email: document.getElementById("email").value,
+    titulo_livro: document.getElementById("titulo_livro").value,
+    sinopse: document.getElementById("sinopse").value,
+    genero: document.getElementById("genero").value,
+    referencias: document.getElementById("referencias").value,
+    tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
+    data_envio: new Date().toISOString(),
+    status: "pendente",
+    codigo_rastreio: codigo_rastreio
+  };
+
 
       const { error } = await supabase
         .from("encomendas")
