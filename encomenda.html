@@ -8,7 +8,6 @@
 </head>
 <body>
 
-  <!-- Cabeçalho -->
   <header class="topo-site">
     <img src="assets/logo.png" alt="Logo Lírio D. Design" class="logo" />
     <nav class="menu-principal">
@@ -22,11 +21,10 @@
     </nav>
   </header>
 
-  <!-- Conteúdo da Página -->
   <main class="encomenda">
     <section class="encomenda-container">
       <h2>Encomende sua capa 💌</h2>
-      <p>Que alegria que você chegou até aqui! Este formulário é o primeiro passo para dar vida à sua história com uma capa feita com carinho e sensibilidade. Preencha com calma, quanto mais detalhes, melhor! 🌼</p>
+      <p>Preencha com carinho, quanto mais detalhes, melhor! 🌼</p>
 
       <form id="form-encomenda" class="formulario">
         <label for="nome">Nome do Autor(a):</label>
@@ -38,43 +36,38 @@
         <label for="titulo_livro">Título do livro:</label>
         <input type="text" id="titulo_livro" name="titulo_livro" required>
 
-        <label for="sinopse">Sinopse ou resumo da história:</label>
+        <label for="sinopse">Sinopse:</label>
         <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
 
         <label for="genero">Gênero literário:</label>
         <input type="text" id="genero" name="genero" required>
 
-        <label for="referencias">Referências visuais (descrições ou links de inspirações):</label>
+        <label for="referencias">Referências visuais:</label>
         <textarea id="referencias" name="referencias" rows="4"></textarea>
 
         <p>Tipo de capa:</p>
-        <label><input type="radio" name="tipo_capa" value="eBook"> eBook</label>
+        <label><input type="radio" name="tipo_capa" value="eBook" required> eBook</label>
         <label><input type="radio" name="tipo_capa" value="Física"> Física</label>
-        <label><input type="radio" name="tipo_capa" value="Ambas" checked> Ambas</label>
+        <label><input type="radio" name="tipo_capa" value="Ambas"> Ambas</label>
 
         <button type="submit">Enviar pedido ✨</button>
       </form>
 
-      <p class="agradecimento">Obrigada por confiar em mim! Em breve entrarei em contato 💖</p>
+      <!-- MENSAGEM DE CONFIRMAÇÃO -->
+      <div id="confirmacao" style="margin-top: 30px; display: none; background: #f0f0f0; padding: 20px; border-radius: 10px;"></div>
 
-      <!-- 👇 Cola aqui embaixo -->
-<div id="confirmacao" style="margin-top: 30px; display: none; background: #f0f0f0; padding: 20px; border-radius: 10px;">
-  <!-- Mensagem de sucesso vai aparecer aqui -->
-</div>
     </section>
   </main>
 
-  <!-- Rodapé -->
   <footer class="rodape">
     <div class="links-uteis">
-      <a href="termos.html">📄 Termos e Condições</a>
-      <a href="faq.html">❓ Perguntas Frequentes</a>
-      <a href="politica.html">🔒 Política de Privacidade</a>
+      <a href="termos.html">📄 Termos</a>
+      <a href="faq.html">❓ FAQ</a>
+      <a href="politica.html">🔒 Privacidade</a>
     </div>
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
 
-  <!-- Supabase Script -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -83,43 +76,42 @@
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const form = document.getElementById("form-encomenda");
+    const confirmacao = document.getElementById("confirmacao");
 
     form.addEventListener("submit", async function (e) {
-  e.preventDefault();
+      e.preventDefault();
 
-  // Gera o código de rastreio tipo "ENCOM-123456"
-  const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+      // Gera o código de rastreio
+      const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
 
-  const dados = {
-    nome: document.getElementById("nome").value,
-    email: document.getElementById("email").value,
-    titulo_livro: document.getElementById("titulo_livro").value,
-    sinopse: document.getElementById("sinopse").value,
-    genero: document.getElementById("genero").value,
-    referencias: document.getElementById("referencias").value,
-    tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
-    data_envio: new Date().toISOString(),
-    status: "pendente",
-    codigo_rastreio: codigo_rastreio
-  };
+      const dados = {
+        nome: document.getElementById("nome").value,
+        email: document.getElementById("email").value,
+        titulo_livro: document.getElementById("titulo_livro").value,
+        sinopse: document.getElementById("sinopse").value,
+        genero: document.getElementById("genero").value,
+        referencias: document.getElementById("referencias").value,
+        tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
+        data_envio: new Date().toISOString(),
+        status: "pendente",
+        codigo_rastreio: codigo_rastreio
+      };
 
-
-      const { error } = await supabase
-        .from("encomendas")
-        .insert([dados]);
+      const { error } = await supabase.from("encomendas").insert([dados]);
 
       if (error) {
         alert("❌ Erro ao enviar. Verifique os dados ou tente novamente.");
         console.error("Erro Supabase:", error);
       } else {
         form.reset();
-document.getElementById("confirmacao").style.display = "block";
-document.getElementById("confirmacao").innerHTML = `
-  <h3>✅ Encomenda enviada com sucesso!</h3>
-  <p>Seu código de rastreio é: <strong>${codigo_rastreio}</strong></p>
-  <p>Você pode acompanhar sua encomenda <a href="acompanhar.html">clicando aqui</a>.</p>
-`;
+        confirmacao.style.display = "block";
+        confirmacao.innerHTML = `
+          <h3>✅ Encomenda enviada com sucesso!</h3>
+          <p>Seu código de rastreio é: <strong>${codigo_rastreio}</strong></p>
+          <p>Você pode acompanhar sua encomenda <a href=\"acompanhar.html\">clicando aqui</a>.</p>
+        `;
+      }
+    });
   </script>
-
 </body>
 </html>
