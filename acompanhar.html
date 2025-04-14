@@ -23,7 +23,7 @@
 
   <main class="acompanhar">
     <section class="acompanhar-container">
-      <h1>Acompanhar Encomenda 💌</h1>
+      <h1>Acompanhar Encomenda 📬</h1>
       <div id="input-container">
         <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
         <button onclick="buscarEncomenda()">Ver Status</button>
@@ -60,88 +60,81 @@
     }
 
     function adicionarDiasUteis(data, dias) {
-  const novaData = new Date(data);
-  let adicionados = 0;
-
-  while (adicionados < dias) {
-    novaData.setDate(novaData.getDate() + 1);
-    const diaSemana = novaData.getDay();
-    if (diaSemana !== 0 && diaSemana !== 6) {
-      adicionados++;
+      const novaData = new Date(data);
+      let adicionados = 0;
+      while (adicionados < dias) {
+        novaData.setDate(novaData.getDate() + 1);
+        const diaSemana = novaData.getDay();
+        if (diaSemana !== 0 && diaSemana !== 6) {
+          adicionados++;
+        }
+      }
+      return novaData;
     }
-  }
 
-  return novaData;
-}
+    function formatarData(data) {
+      return data.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+    }
 
+    async function buscarEncomenda(codigoManual) {
+      const codigo = (codigoManual || codigoInput.value.trim()).toUpperCase().trim();
+      const resultado = document.getElementById('resultado');
+      resultado.style.display = 'block';
+      resultado.innerHTML = `<p>🔎 Buscando informações para o código: <strong>${codigo}</strong>...</p>`;
 
-function formatarData(data) {
-  return data.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  });
-}
+      if (!codigo) {
+        resultado.innerHTML = '<p class="erro">Por favor, digite o código de rastreio.</p>';
+        return;
+      }
 
+      const { data: encomenda, error } = await supabase
+        .from('encomendas')
+        .select('*')
+        .eq('codigo_rastreio', codigo)
+        .single();
 
-async function buscarEncomenda(codigoManual) {
-  const codigo = (codigoManual || codigoInput.value.trim()).toUpperCase().trim();
-  const resultado = document.getElementById('resultado');
-  resultado.style.display = 'block';
-  resultado.innerHTML = `<p>🔎 Buscando informações para o código: <strong>${codigo}</strong>...</p>`;
+      if (error || !encomenda) {
+        resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😞</p>';
+        return;
+      }
 
-  if (!codigo) {
-    resultado.innerHTML = '<p class="erro">Por favor, digite o código de rastreio.</p>';
-    return;
-  }
+      const { data: todas } = await supabase
+        .from('encomendas')
+        .select('*')
+        .order('data_envio', { ascending: true });
 
-  const { data: encomenda, error } = await supabase
-    .from('encomendas')
-    .select('*')
-    .eq('codigo_rastreio', codigo)
-    .single();
+      const posicao = todas.findIndex(e => e.codigo_rastreio === codigo) + 1;
+      const pendentesAntes = todas.slice(0, posicao - 1).filter(e => e.status !== 'finalizada').length;
 
-  if (error || !encomenda) {
-    resultado.innerHTML = '<p class="erro">Nenhuma encomenda encontrada com esse código. 😢</p>';
-    return;
-  }
+      const diasEstimados = pendentesAntes * 3 + 3; // Mínimo de 3 dias úteis
+      const agora = new Date();
+      const hora = agora.getHours();
+      const inicioContagem = (hora < 12) ? agora : adicionarDiasUteis(agora, 1);
+      const dataPrevista = adicionarDiasUteis(inicioContagem, diasEstimados);
 
-  const { data: todas } = await supabase
-    .from('encomendas')
-    .select('*')
-    .order('data_envio', { ascending: true });
+      resultado.innerHTML = `
+        <h2>Status da Encomenda</h2>
+        <p><strong>Nome:</strong> ${encomenda.autor || '---'}</p>
+        <p><strong>E-mail:</strong> ${encomenda.email || '---'}</p>
+        <p><strong>Título do Livro:</strong> ${encomenda.titulo || '---'}</p>
+        <p><strong>Gênero:</strong> ${encomenda.genero || '---'}</p>
+        <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa || '---'}</p>
+        <hr>
+        <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
+        <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
+        <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrevista)}</strong> ✨</p>
+        <p class="info-final">
+          ⏳ Esta é uma previsão estimada com base na fila atual. Mas não se preocupe: posso entregar sua capa antes do prazo!<br>
+          O prazo informado é o limite máximo para entrega com carinho. 💖
+        </p>
+      `;
 
-  const posicao = todas.findIndex(e => e.codigo_rastreio === codigo) + 1;
-  const pendentesAntes = todas.slice(0, posicao - 1).filter(e => e.status !== 'finalizada').length;
-
-  const diasEstimados = pendentesAntes * 3;
-  const agora = new Date();
-  const hora = agora.getHours();
-
-  const inicioContagem = (hora < 12) ? agora : adicionarDiasUteis(agora, 1);
-  const dataPrevista = adicionarDiasUteis(inicioContagem, diasEstimados);
-
-  resultado.innerHTML = `
-  <h2>Status da Encomenda</h2>
-  <p><strong>Nome:</strong> ${encomenda.nome || '---'}</p>
-  <p><strong>E-mail:</strong> ${encomenda.email || '---'}</p>
-  <p><strong>Título do Livro:</strong> ${encomenda.titulo || '---'}</p>
-  <p><strong>Gênero:</strong> ${encomenda.genero || '---'}</p>
-  <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa || '---'}</p>
-  <hr>
-  <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
-  <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
-  <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrevista)}</strong> ✨</p>
-  <p class="info-final">
-    ⏳ Esta é uma previsão estimada com base na fila atual. Mas não se preocupe: posso entregar sua capa antes do prazo!  
-    O prazo informado é o limite máximo para entrega com carinho. 💖
-  </p>
-`;
-
-
-  resultado.scrollIntoView({ behavior: 'smooth' });
-}
-
+      resultado.scrollIntoView({ behavior: 'smooth' });
+    }
   </script>
 </body>
 </html>
