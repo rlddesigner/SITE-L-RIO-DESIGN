@@ -127,7 +127,7 @@
       const codigo = document.getElementById("codigo").value.trim();
       if (!codigo) return alert("Digite o código de rastreio.");
 
-      resultado.innerHTML = "Buscando...";
+      resultado.innerHTML = formatarPedido(data);
       resultado.style.display = "block";
 
       const { data, error } = await supabase
@@ -147,7 +147,7 @@
       const email = document.getElementById("email").value.trim();
       if (!email) return alert("Digite o e-mail.");
 
-      resultado.innerHTML = "Buscando...";
+      resultado.innerHTML = data.map(formatarPedido).join("");
       resultado.style.display = "block";
 
       const { data, error } = await supabase
