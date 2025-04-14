@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmar Encomenda 📘</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .container {
+      max-width: 700px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: #fffaf7;
+      border: 2px solid #ffeedf;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
+      font-family: 'Segoe UI', sans-serif;
+      color: #444;
+    }
+    h1 {
+      text-align: center;
+      color: #217c67;
+    }
+    .botao-confirmar {
+      display: block;
+      margin: 2rem auto 0;
+      background-color: #217c67;
+      color: white;
+      padding: 0.8rem 1.6rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .botao-confirmar:hover {
+      background-color: #1b5f53;
+    }
+    .mensagem {
+      text-align: center;
+      margin-top: 2rem;
+      color: #217c67;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Confirmar Encomenda</h1>
+    <p>🌷 O processo de criação será feito com carinho e cuidado! Funciona assim:</p>
+    <ul>
+      <li>🔍 Primeiro, buscarei imagens de referência com base na sua descrição.</li>
+      <li>🧩 Depois, inicio o processo de montagem e design da capa.</li>
+      <li>📬 Quando uma prévia estiver pronta, ela será enviada ao seu e-mail.</li>
+      <li>✅ Você poderá aprovar ou sugerir ajustes.</li>
+      <li>💳 O pagamento só será feito quando a capa for aprovada por você!</li>
+    </ul>
+    <p style="margin-top: 1rem;">💰 Valor estimado: <strong id="preco"></strong></p>
+
+    <button class="botao-confirmar" onclick="confirmarPedido()">✅ Confirmar Encomenda</button>
+    <div class="mensagem" id="mensagem"></div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+    );
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigo = urlParams.get('codigo');
+
+    async function confirmarPedido() {
+      if (!codigo) return alert("Código inválido.");
+
+      const { error } = await supabase
+        .from('encomendas')
+        .update({ status: 'pedido confirmado - criação em andamento' })
+        .eq('codigo_rastreio', codigo);
+
+      if (error) {
+        document.getElementById("mensagem").textContent = "❌ Ocorreu um erro. Tente novamente.";
+        console.error(error);
+      } else {
+        document.getElementById("mensagem").textContent = "✅ Pedido confirmado com sucesso!";
+      }
+    }
+
+    // opcional: exibe o valor aproximado
+    async function buscarPreco() {
+      if (!codigo) return;
+      const { data } = await supabase.from("encomendas").select("tipo_capa, orelhas").eq("codigo_rastreio", codigo).single();
+      let preco = 0;
+      if (data?.tipo_capa === "ebook") preco = 60;
+      else if (data?.tipo_capa === "fisica") preco = data.orelhas === "sim" ? 40 : 25;
+      else if (data?.tipo_capa === "ambas") preco = 100;
+      document.getElementById("preco").textContent = `R$ ${preco},00`;
+    }
+
+    buscarPreco();
+  </script>
+</body>
+</html>
