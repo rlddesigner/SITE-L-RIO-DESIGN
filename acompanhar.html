@@ -121,23 +121,22 @@ async function buscarEncomenda(codigoManual) {
   const dataPrevista = adicionarDiasUteis(inicioContagem, diasEstimados);
 
   resultado.innerHTML = `
-    <h2>Status da Encomenda</h2>
-    <p><strong>Nome:</strong> ${encomenda.nome}</p>
-    <p><strong>E-mail:</strong> ${encomenda.email}</p>
-    <p><strong>Título do Livro:</strong> ${encomenda.titulo_livro}</p>
-    <p><strong>Gênero:</strong> ${encomenda.genero}</p>
-    <p><strong>Sinopse:</strong> ${encomenda.sinopse}</p>
-    <p><strong>Referências:</strong> ${encomenda.referencias || 'Não informado'}</p>
-    <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa}</p>
-    <hr>
-    <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
-    <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
-    <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrevista)}</strong> ✨</p>
-    <p class="info-final">
-      ⏳ Esta é uma previsão estimada com base na fila atual. Mas não se preocupe: posso entregar sua capa antes do prazo!  
-      O prazo informado é o limite máximo para entrega com carinho. 💖
-    </p>
-  `;
+  <h2>Status da Encomenda</h2>
+  <p><strong>Nome:</strong> ${encomenda.nome || '---'}</p>
+  <p><strong>E-mail:</strong> ${encomenda.email || '---'}</p>
+  <p><strong>Título do Livro:</strong> ${encomenda.titulo || '---'}</p>
+  <p><strong>Gênero:</strong> ${encomenda.genero || '---'}</p>
+  <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa || '---'}</p>
+  <hr>
+  <p><strong>Status atual:</strong> <em>${encomenda.status}</em></p>
+  <p><strong>Você está na fila:</strong> ${pendentesAntes} ${pendentesAntes === 1 ? 'encomenda' : 'encomendas'} antes da sua</p>
+  <p><strong>Previsão de entrega:</strong> até <strong>${formatarData(dataPrevista)}</strong> ✨</p>
+  <p class="info-final">
+    ⏳ Esta é uma previsão estimada com base na fila atual. Mas não se preocupe: posso entregar sua capa antes do prazo!  
+    O prazo informado é o limite máximo para entrega com carinho. 💖
+  </p>
+`;
+
 
   resultado.scrollIntoView({ behavior: 'smooth' });
 }

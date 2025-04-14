@@ -56,6 +56,13 @@
     </div>
   </form>
 
+  <!-- Mensagem final com botão para acompanhar -->
+  <div id="mensagem-final" style="display:none; text-align:center; margin-top: 2rem;">
+    <p>✨ Sua encomenda foi enviada com sucesso!</p>
+    <p>Quer acompanhar o status da sua encomenda?</p>
+    <a id="botao-acompanhar" href="#" class="botao-verde">📦 Acompanhar Pedido</a>
+  </div>
+
   <!-- Rodapé -->
   <footer class="rodape">
     <div class="links-uteis">
@@ -169,51 +176,6 @@
       const div = document.getElementById("opcoes-orelhas");
       div.style.display = valor === "sim" ? "block" : "none";
     }
-
-    document.getElementById("form-encomenda").addEventListener("submit", function (e) {
-      e.preventDefault();
-      alert("Formulário enviado! Em breve conectaremos ao Supabase.");
-    });
   </script>
-
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-  const supabase = createClient(
-    'https://tcnonaprqfcpqmscrbkg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-  );
-
-  const form = document.getElementById('form-encomenda');
-
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-    const dados = Object.fromEntries(formData.entries());
-
-    // Gera código de rastreio
-    const codigo_rastreio = 'ENCOM-' + Math.floor(100000 + Math.random() * 900000);
-
-    const payload = {
-      ...dados,
-      codigo_rastreio: codigo_rastreio,
-      data_envio: new Date().toISOString(),
-      status: 'pendente'
-    };
-
-    // Envia para o Supabase
-    const { error } = await supabase.from('encomendas').insert([payload]);
-
-    if (error) {
-      alert('❌ Erro ao enviar a encomenda.');
-      console.error(error);
-    } else {
-      // Redireciona para a página de acompanhamento
-      window.location.href = `acompanhar.html?codigo=${codigo_rastreio}`;
-    }
-  });
-</script>
-
 </body>
 </html>
