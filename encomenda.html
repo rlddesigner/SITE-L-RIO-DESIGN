@@ -178,5 +178,46 @@
       div.style.display = valor === "sim" ? "block" : "none";
     }
   </script>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const supabase = createClient(
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+  );
+
+  const form = document.getElementById("form-encomenda");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const dados = {};
+    formData.forEach((value, key) => dados[key] = value);
+
+    // Adiciona campos automáticos
+    const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+    dados.codigo_rastreio = codigo_rastreio;
+    dados.status = "aguardando confirmação";
+    dados.data_envio = new Date().toISOString();
+
+    const { error } = await supabase.from("encomendas").insert([dados]);
+
+    if (error) {
+      alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
+      console.error(error);
+      return;
+    }
+
+    // Mostra mensagem final
+    document.getElementById("mensagem-final").style.display = "block";
+    document.getElementById("botao-acompanhar").href = `acompanhar.html?codigo=${codigo_rastreio}`;
+    form.style.display = "none";
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  });
+</script>
+
+  
 </body>
 </html>
