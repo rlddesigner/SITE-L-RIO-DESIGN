@@ -91,18 +91,16 @@
       e.preventDefault();
 
       const dados = {
-        nome: document.getElementById("nome").value,
-        email: document.getElementById("email").value,
-        instagram: document.getElementById("instagram").value,
-        titulo_livro: document.getElementById("titulo_livro").value,
-        sinopse: document.getElementById("sinopse").value,
-        genero: document.getElementById("genero").value,
-        referencias: document.getElementById("referencias").value,
-        cores: document.getElementById("cores").value,
-        observacoes: document.getElementById("observacoes").value,
-        tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
-        data_envio: new Date().toISOString()
-      };
+  nome: document.getElementById("nome").value,
+  email: document.getElementById("email").value,
+  titulo_livro: document.getElementById("titulo_livro").value,
+  sinopse: document.getElementById("sinopse").value,
+  genero: document.getElementById("genero").value,
+  referencias: document.getElementById("referencias").value,
+  tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
+  data_envio: new Date().toISOString()
+};
+
 
       const { error } = await supabase
         .from("encomendas")
