@@ -60,7 +60,9 @@
     }
 
     async function buscarEncomenda(codigoManual) {
-      const codigo = codigoManual || codigoInput.value.trim();
+        const codigo = (codigoManual || codigoInput.value.trim()).toUpperCase().trim();
+document.getElementById('resultado').innerHTML = `<p>🔎 Buscando informações para o código: <strong>${codigo}</strong>...</p>`;
+
       const resultado = document.getElementById('resultado');
       resultado.style.display = 'block';
 
