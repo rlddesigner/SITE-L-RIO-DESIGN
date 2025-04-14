@@ -675,4 +675,90 @@
     text-align: center;
     line-height: 1.6;
   }
-  
+ /* Formulário por Etapas – estilo floral suave */
+form#form-encomenda {
+  background: #fffdfb;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.04);
+  max-width: 750px;
+  margin: 40px auto;
+}
+
+form#form-encomenda h2,
+form#form-encomenda h3 {
+  color: #367c5a; /* verde escuro */
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+form#form-encomenda label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: #444;
+}
+
+form#form-encomenda input,
+form#form-encomenda textarea,
+form#form-encomenda select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #fff;
+  transition: border 0.3s;
+}
+
+form#form-encomenda input:focus,
+form#form-encomenda textarea:focus,
+form#form-encomenda select:focus {
+  border-color: #f2a766; /* laranja */
+  outline: none;
+}
+
+.botoes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.botoes button {
+  background-color: #f2a766;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.botoes button:hover {
+  background-color: #dd9055;
+}
+
+.etapa {
+  display: none;
+}
+
+.etapa.ativa {
+  display: block;
+}
+
+textarea {
+  resize: vertical;
+}
+form#form-encomenda h1 {
+  text-align: center;
+  font-size: 2em;
+  color: #367c5a;
+  margin-bottom: 20px;
+}
+h1 {
+  text-align: center;
+  font-size: 2em;
+  color: #367c5a;
+}

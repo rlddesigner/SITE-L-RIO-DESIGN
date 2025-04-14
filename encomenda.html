@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lírio D. Design - Encomendas</title>
+  <title>Encomenda por Etapas</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
+  <!-- Cabeçalho -->
   <header class="topo-site">
     <img src="assets/logo.png" alt="Logo Lírio D. Design" class="logo" />
     <nav class="menu-principal">
@@ -21,102 +21,159 @@
     </nav>
   </header>
 
-  <main class="encomenda">
-    <section class="encomenda-container">
-      <h2>Encomende sua capa 💌</h2>
-      <p>Preencha com carinho, quanto mais detalhes, melhor! 🌼</p>
+  <h1 style="text-align: center;">Formulário de Encomenda 🌸</h1>
 
-      <form id="form-encomenda" class="formulario">
-        <label for="nome">Nome do Autor(a):</label>
-        <input type="text" id="nome" name="nome" required>
+  <form id="form-encomenda">
+    <!-- ETAPA 1 -->
+    <div class="etapa ativa" id="etapa-1">
+      <h2>1. Qual tipo de capa você deseja?</h2>
+      <label><input type="radio" name="tipo_capa" value="ebook" required /> Apenas eBook</label><br />
+      <label><input type="radio" name="tipo_capa" value="fisica" /> Apenas Física</label><br />
+      <label><input type="radio" name="tipo_capa" value="ambas" /> Ambas</label>
+      <div class="botoes">
+        <span></span>
+        <button type="button" onclick="proximaEtapa()">Próximo</button>
+      </div>
+    </div>
 
-        <label for="email">Seu e-mail:</label>
-        <input type="email" id="email" name="email" required>
+    <!-- ETAPA 2 (campos dinâmicos) -->
+    <div class="etapa" id="etapa-2">
+      <div id="conteudo-dinamico"></div>
+      <div class="botoes">
+        <button type="button" onclick="voltarEtapa()">Voltar</button>
+        <button type="button" onclick="proximaEtapa()">Próximo</button>
+      </div>
+    </div>
 
-        <label for="titulo_livro">Título do livro:</label>
-        <input type="text" id="titulo_livro" name="titulo_livro" required>
+    <!-- ETAPA 3 - Resumo -->
+    <div class="etapa" id="etapa-3">
+      <h2>Resumo da Encomenda</h2>
+      <div id="resumo"></div>
+      <div class="botoes">
+        <button type="button" onclick="voltarEtapa()">Voltar</button>
+        <button type="submit">Enviar</button>
+      </div>
+    </div>
+  </form>
 
-        <label for="sinopse">Sinopse:</label>
-        <textarea id="sinopse" name="sinopse" rows="4" required></textarea>
-
-        <label for="genero">Gênero literário:</label>
-        <input type="text" id="genero" name="genero" required>
-
-        <label for="referencias">Referências visuais:</label>
-        <textarea id="referencias" name="referencias" rows="4"></textarea>
-
-        <p>Tipo de capa:</p>
-        <label><input type="radio" name="tipo_capa" value="eBook" required> eBook</label>
-        <label><input type="radio" name="tipo_capa" value="Física"> Física</label>
-        <label><input type="radio" name="tipo_capa" value="Ambas"> Ambas</label>
-
-        <button type="submit">Enviar pedido ✨</button>
-      </form>
-
-      <!-- MENSAGEM DE CONFIRMAÇÃO -->
-      <div id="confirmacao" style="margin-top: 30px; display: none; background: #f0f0f0; padding: 20px; border-radius: 10px;"></div>
-
-    </section>
-  </main>
-
+  <!-- Rodapé -->
   <footer class="rodape">
     <div class="links-uteis">
-      <a href="termos.html">📄 Termos</a>
-      <a href="faq.html">❓ FAQ</a>
-      <a href="politica.html">🔒 Privacidade</a>
+      <a href="termos.html">📄 Termos e Condições</a>
+      <a href="faq.html">❓ Perguntas Frequentes</a>
+      <a href="politica.html">🔒 Política de Privacidade</a>
     </div>
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  <script>
+    let etapaAtual = 1;
+    const totalEtapas = 3;
 
-    const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    function mostrarEtapa(n) {
+      document.querySelectorAll('.etapa').forEach(e => e.classList.remove('ativa'));
+      document.getElementById(`etapa-${n}`).classList.add('ativa');
+    }
 
-    const form = document.getElementById("form-encomenda");
-    const confirmacao = document.getElementById("confirmacao");
+    function proximaEtapa() {
+      if (etapaAtual === 1) {
+        const tipo = document.querySelector('input[name="tipo_capa"]:checked');
+        if (!tipo) return alert('Escolha uma opção.');
+        gerarCamposDinamicos(tipo.value);
+      }
+      if (etapaAtual < totalEtapas) {
+        etapaAtual++;
+        mostrarEtapa(etapaAtual);
+      }
+    }
 
-    form.addEventListener("submit", async function (e) {
-  e.preventDefault();
+    function voltarEtapa() {
+      if (etapaAtual > 1) {
+        etapaAtual--;
+        mostrarEtapa(etapaAtual);
+      }
+    }
 
-  const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+    function gerarCamposDinamicos(tipo) {
+      const container = document.getElementById("conteudo-dinamico");
+      let html = '';
 
-  const dados = {
-    nome: document.getElementById("nome").value,
-    email: document.getElementById("email").value,
-    titulo_livro: document.getElementById("titulo_livro").value,
-    sinopse: document.getElementById("sinopse").value,
-    genero: document.getElementById("genero").value,
-    referencias: document.getElementById("referencias").value,
-    tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
-    data_envio: new Date().toISOString(),
-    status: "pendente",
-    codigo_rastreio: codigo_rastreio
-  };
+      if (tipo === 'ebook' || tipo === 'ambas') {
+        html += `<h2>2. Informações da Capa (${tipo})</h2>`;
+        html += `
+          <label>Título do livro:<br><input type="text" name="titulo" required></label><br>
+          <label>Subtítulo (se houver):<br><input type="text" name="subtitulo" placeholder="Opcional"></label><br>
+          <label>Nome do autor:<br><input type="text" name="autor" required></label><br>
+          <label>Gênero:<br><input type="text" name="genero" required></label><br>
+          <label>Como você imagina sua capa?<br><textarea name="descricao_capa" required></textarea></label><br>
+          <label>Referências (links ou nomes):<br><input type="text" name="referencias"></label><br>
+          <label>Cores desejadas:<br><input type="text" name="cor_desejada"></label><br>
+          <label>Cores que não quer:<br><input type="text" name="cor_evitar"></label><br>
 
-  const { error } = await supabase.from("encomendas").insert([dados]);
+          <hr>
+          <h3>Características físicas dos personagens</h3>
+          <p>Descreva como os personagens devem ser representados na capa (ex: cabelo, cor da pele, porte físico, traços marcantes...)</p>
+          <label>Personagem principal:<br>
+            <textarea name="caracteristicas_principal"></textarea>
+          </label><br>
+          <label>Personagem secundário (se houver):<br>
+            <textarea name="caracteristicas_secundario"></textarea>
+          </label><br>
+        `;
+      }
 
-  if (error) {
-    alert("❌ Erro ao enviar. Tente novamente.");
-    console.error("Erro Supabase:", error);
-  } else {
-    form.reset();
+      if (tipo === 'fisica') {
+        html += `
+          <hr>
+          <h2>Adaptação para Capa Física</h2>
+          <p><strong>Importante:</strong> Este formulário é para quem <u>já possui a capa frontal</u> e deseja adaptá-la para impressão física.</p>
+          <p>Por favor, envie o link compartilhável da arte da capa frontal (Google Drive, Dropbox, etc.).</p>
+          <label>Link da capa frontal:<br>
+            <input type="url" name="link_capa_frontal" placeholder="Cole aqui o link compartilhável da capa">
+          </label><br>
+        `;
+      }
 
-    const confirmacao = document.getElementById("confirmacao");
-    confirmacao.style.display = "block";
-    confirmacao.innerHTML = `
-      <h3>✅ Encomenda enviada com sucesso!</h3>
-      <p>Seu código de rastreio é: <strong>${codigo_rastreio}</strong></p>
-      <p><a href="acompanhar.html?codigo=${codigo_rastreio}" target="_blank" style="display:inline-block;margin-top:10px;padding:10px 15px;background:#ba5d82;color:#fff;border-radius:6px;text-decoration:none;">👉 Acompanhar minha encomenda</a></p>
-    `;
+      if (tipo === 'fisica' || tipo === 'ambas') {
+        html += `
+          <hr>
+          <h2>Informações do livro físico</h2>
+          <label>Sinopse do livro:<br><textarea name="sinopse"></textarea></label><br>
+          <label>Dimensões do livro (ex: 14x21cm):<br><input type="text" name="dimensao"></label><br>
+          <label>Nº exato de páginas:<br><input type="number" name="paginas" required></label>
+          <p style="font-size: 0.9em; color: #666; margin-top: -10px;">
+            O livro precisa estar totalmente diagramado para garantir o cálculo correto da lombada.
+          </p><br>
 
-    confirmacao.scrollIntoView({ behavior: "smooth" });
-  }
-});
+          <label>O livro terá orelhas?<br>
+            <select name="orelhas" onchange="mostrarCamposOrelhas(this.value)">
+              <option value="nao">Não</option>
+              <option value="sim">Sim</option>
+            </select>
+          </label><br>
 
+          <div id="opcoes-orelhas" style="display:none;">
+            <label>Tamanho das orelhas:<br>
+              <input type="text" name="tamanho_orelhas" placeholder="Ex: 7cm, 8cm, 10cm...">
+            </label><br>
+            <label>Texto da orelha frontal:<br><textarea name="orelha_frontal"></textarea></label><br>
+            <label>Texto da orelha traseira:<br><textarea name="orelha_traseira"></textarea></label><br>
+          </div>
+        `;
+      }
 
+      container.innerHTML = html;
+    }
+
+    function mostrarCamposOrelhas(valor) {
+      const div = document.getElementById("opcoes-orelhas");
+      div.style.display = valor === "sim" ? "block" : "none";
+    }
+
+    document.getElementById("form-encomenda").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("Formulário enviado! Em breve conectaremos ao Supabase.");
+    });
   </script>
 </body>
 </html>
