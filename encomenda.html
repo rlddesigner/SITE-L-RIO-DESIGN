@@ -111,10 +111,10 @@
     const { error } = await supabase.from("encomendas").insert([dados]);
 
     if (error) {
-      alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
-      console.error(error);
-      return;
-    }
+  alert("❌ Ocorreu um erro ao enviar. Tente novamente.");
+  console.error("Erro Supabase:", error); // <-- adicione isso aqui pra ver o que tá rolando
+  return;
+}
 
     // Enviar e-mail com EmailJS
     emailjs.send('service_vafq5zq', 'template_o5lhvqg', {
