@@ -69,15 +69,35 @@
     </nav>
   </header>
 
-  <main class="enviado-container">
-    <h1>✨ Sua encomenda foi enviada com sucesso!</h1>
-    <p>Muito obrigada pela confiança. 💖</p>
-    <p>Você pode acompanhar o andamento da sua encomenda clicando abaixo:</p>
-
-    <div id="link-acompanhar"></div>
-
-    <p class="avisinho-final">📧 Não se preocupe, você receberá um e-mail com todas as informações necessárias para a criação da sua capa.</p>
+  <main style="text-align: center; padding: 3rem 1rem;">
+    <div style="max-width: 600px; margin: auto; padding: 2rem; border-radius: 15px; background-color: #fff9f4; border: 2px solid #ffe4c4;">
+      <h1 style="color: #217c67;">✨ Sua encomenda foi enviada com sucesso!</h1>
+      <p style="font-size: 1.1rem;">Muito obrigada pela confiança. 💖</p>
+      <p>Você pode acompanhar o andamento da sua encomenda clicando abaixo:</p>
+  
+      <a id="botao-status" href="#" class="botao-verde" style="display:inline-block; margin-top:1rem; padding:0.6rem 1.2rem; background-color:#217c67; color:white; border-radius:8px; text-decoration:none;">
+        📦 Acompanhar Pedido
+      </a>
+  
+      <p style="margin-top: 2rem; font-style: italic; color: #666;">
+        📩 <em>Não se preocupe, você receberá um e-mail com todas as informações necessárias<br>
+        para a criação da sua capa.</em>
+      </p>
+    </div>
   </main>
+  
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get("codigo");
+    const botao = document.getElementById("botao-status");
+  
+    if (codigo) {
+      botao.href = `status.html?codigo=${codigo}`;
+      botao.style.display = "inline-block";
+    } else {
+      botao.style.display = "none";
+    }
+  </script>  
 
   <!-- Rodapé -->
   <footer class="rodape">
@@ -88,18 +108,6 @@
     </div>
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const codigo = params.get("codigo");
-    const botao = document.getElementById("botao-status");
-
-    if (codigo) {
-      botao.href = `status.html?codigo=${codigo}`;
-    } else {
-      botao.style.display = "none";
-    }
-  </script>
 
 </body>
 </html>
