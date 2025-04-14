@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lírio D. Design</title>
+  <title>Lírio D. Design - Encomendas</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -21,7 +21,6 @@
       </ul>
     </nav>
   </header>
-
 
   <!-- Conteúdo da Página -->
   <main class="encomenda">
@@ -81,40 +80,43 @@
 
   <!-- Supabase Script -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // use sua chave completa
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  <script>
+    const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  const form = document.getElementById("form-encomenda");
+    const form = document.getElementById("form-encomenda");
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    const dados = {
-      nome: document.getElementById("nome").value,
-      email: document.getElementById("email").value,
-      instagram: document.getElementById("instagram").value,
-      titulo_livro: document.getElementById("titulo_livro").value,
-      sinopse: document.getElementById("sinopse").value,
-      genero: document.getElementById("genero").value,
-      referencias: document.getElementById("referencias").value,
-      cores: document.getElementById("cores").value,
-      observacoes: document.getElementById("observacoes").value,
-      tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
-      data_envio: new Date().toISOString()
-    };
+      const dados = {
+        nome: document.getElementById("nome").value,
+        email: document.getElementById("email").value,
+        instagram: document.getElementById("instagram").value,
+        titulo_livro: document.getElementById("titulo_livro").value,
+        sinopse: document.getElementById("sinopse").value,
+        genero: document.getElementById("genero").value,
+        referencias: document.getElementById("referencias").value,
+        cores: document.getElementById("cores").value,
+        observacoes: document.getElementById("observacoes").value,
+        tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
+        data_envio: new Date().toISOString()
+      };
 
-    const { error } = await supabase.from("encomendas").insert([dados]);
-    if (error) {
-      alert("❌ Erro ao enviar a encomenda. Verifique os dados ou tente novamente.");
-      console.error("Erro do Supabase:", error);
-    } else {
-      alert("✅ Encomenda enviada com sucesso! Muito obrigada 💌");
-      form.reset();
-    }
-  });
+      const { error } = await supabase
+        .from("encomendas")
+        .insert([dados]);
 
-</script>
+      if (error) {
+        alert("❌ Erro ao enviar. Verifique os dados ou tente novamente.");
+        console.error("Erro Supabase:", error);
+      } else {
+        alert("✅ Encomenda enviada com sucesso! 💌");
+        form.reset();
+      }
+    });
+  </script>
+
 </body>
 </html>
