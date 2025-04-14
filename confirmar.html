@@ -89,13 +89,28 @@
     // opcional: exibe o valor aproximado
     async function buscarPreco() {
       if (!codigo) return;
-      const { data } = await supabase.from("encomendas").select("tipo_capa, orelhas").eq("codigo_rastreio", codigo).single();
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("tipo_capa, orelhas")
+        .eq("codigo_rastreio", codigo)
+        .single();
+
+      if (error || !data) {
+        document.getElementById("preco").textContent = "indisponível";
+        return;
+      }
+
       let preco = 0;
-      if (data?.tipo_capa === "ebook") preco = 60;
-      else if (data?.tipo_capa === "fisica") preco = data.orelhas === "sim" ? 40 : 25;
-      else if (data?.tipo_capa === "ambas") preco = 100;
+      const tipo = data.tipo_capa;
+      const orelhas = data.orelhas;
+
+      if (tipo === "ebook") preco = 60;
+      else if (tipo === "fisica") preco = orelhas === "sim" ? 40 : 25;
+      else if (tipo === "ambas") preco = 100;
+
       document.getElementById("preco").textContent = `R$ ${preco},00`;
     }
+
 
     buscarPreco();
   </script>
