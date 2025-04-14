@@ -79,40 +79,34 @@
     const confirmacao = document.getElementById("confirmacao");
 
     form.addEventListener("submit", async function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      // Gera o código de rastreio
-      const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
+  const codigo_rastreio = "ENCOM-" + Math.floor(100000 + Math.random() * 900000);
 
-      const dados = {
-        nome: document.getElementById("nome").value,
-        email: document.getElementById("email").value,
-        titulo_livro: document.getElementById("titulo_livro").value,
-        sinopse: document.getElementById("sinopse").value,
-        genero: document.getElementById("genero").value,
-        referencias: document.getElementById("referencias").value,
-        tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
-        data_envio: new Date().toISOString(),
-        status: "pendente",
-        codigo_rastreio: codigo_rastreio
-      };
+  const dados = {
+    nome: document.getElementById("nome").value,
+    email: document.getElementById("email").value,
+    titulo_livro: document.getElementById("titulo_livro").value,
+    sinopse: document.getElementById("sinopse").value,
+    genero: document.getElementById("genero").value,
+    referencias: document.getElementById("referencias").value,
+    tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
+    data_envio: new Date().toISOString(),
+    status: "pendente",
+    codigo_rastreio: codigo_rastreio
+  };
 
-      const { error } = await supabase.from("encomendas").insert([dados]);
+  const { error } = await supabase.from("encomendas").insert([dados]);
 
-      if (error) {
-        alert("❌ Erro ao enviar. Verifique os dados ou tente novamente.");
-        console.error("Erro Supabase:", error);
-      } else {
-        form.reset();
-        confirmacao.style.display = "block";
-        confirmacao.innerHTML = `
-  <h3>✅ Encomenda enviada com sucesso!</h3>
-  <p>Seu código de rastreio é: <strong>${codigo_rastreio}</strong></p>
-  <p><a href="acompanhar.html?codigo=${codigo_rastreio}" style="display:inline-block;margin-top:10px;padding:10px 15px;background:#ba5d82;color:#fff;border-radius:6px;text-decoration:none;">👉 Acompanhar minha encomenda</a></p>
-`;
+  if (error) {
+    alert("❌ Erro ao enviar. Verifique os dados ou tente novamente.");
+    console.error("Erro Supabase:", error);
+  } else {
+    // Redireciona diretamente para a página de acompanhamento com o código
+    window.location.href = `acompanhar.html?codigo=${codigo_rastreio}`;
+  }
+});
 
-      }
-    });
   </script>
 </body>
 </html>
