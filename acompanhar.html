@@ -3,8 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acompanhar Encomenda 💌</title>
+  <title>Acompanhar Encomenda ✨</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .acompanhar-container {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: #fffaf7;
+      border: 2px solid #ffeedf;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
+    }
+
+    .acompanhar-container h1 {
+      font-size: 1.8rem;
+      color: #217c67;
+      margin-bottom: 2rem;
+    }
+
+    .acompanhar-container input[type="text"],
+    .acompanhar-container input[type="email"] {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .acompanhar-container button {
+      background-color: #217c67;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .acompanhar-container button:hover {
+      background-color: #1c6654;
+    }
+
+    .resultado {
+      margin-top: 2rem;
+      text-align: left;
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .card-pedido {
+      border: 1px solid #eee;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      background-color: #fffefb;
+    }
+
+    .botao-verde {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background-color: #217c67;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
   <!-- Cabeçalho -->
@@ -17,25 +87,24 @@
         <li><a href="portfolio.html">✿ Portfólio</a></li>
         <li><a href="servicos.html">✿ Serviços</a></li>
         <li><a href="contato.html">✿ Contato</a></li>
+        <li><a href="acompanhar.html">✿ Acompanhe seu Pedido</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="acompanhar">
-    <section class="acompanhar-container" style="text-align: center; max-width: 600px; margin: auto;">
-      <h1>Acompanhe seu Pedido 💌</h1>
-      <p>Digite o <strong>código de rastreio</strong> para ver um pedido específico ou o <strong>e-mail</strong> para ver todos os seus pedidos.</p>
+  <main class="acompanhar-container">
+    <h1>📦 Acompanhe seu Pedido</h1>
+    <p>Digite o <strong>código de rastreio</strong> para um pedido específico ou seu <strong>e-mail</strong> para ver todos os seus pedidos.</p>
 
-      <input type="text" id="codigo" placeholder="Código de rastreio (ex: ENCOM-123456)" style="margin-bottom: 1rem; width: 100%; padding: 0.5rem;">
-      <button onclick="buscarEncomendaPorCodigo()">🔍 Ver por Código</button>
+    <input type="text" id="codigo" placeholder="Digite seu código de rastreio (ex: ENCOM-123456)">
+    <button onclick="buscarPorCodigo()">🔍 Ver Pedido</button>
 
-      <hr style="margin: 2rem 0;">
+    <hr style="margin: 2rem 0;">
 
-      <input type="email" id="email" placeholder="Seu e-mail de contato" style="margin-bottom: 1rem; width: 100%; padding: 0.5rem;">
-      <button onclick="buscarEncomendasPorEmail()">📧 Ver Todos os Pedidos</button>
+    <input type="email" id="email" placeholder="Digite seu e-mail para ver todos os pedidos">
+    <button onclick="buscarPorEmail()">📧 Buscar por E-mail</button>
 
-      <div id="resultado" style="margin-top: 2rem;"></div>
-    </section>
+    <div id="resultado" class="resultado" style="display: none;"></div>
   </main>
 
   <!-- Rodapé -->
@@ -56,6 +125,8 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
 
+    const resultado = document.getElementById("resultado");
+
     function formatarPedido(encomenda) {
       return `
         <div class="card-pedido">
@@ -64,38 +135,50 @@
           <p><strong>E-mail:</strong> ${encomenda.email || "---"}</p>
           <p><strong>Tipo de Capa:</strong> ${encomenda.tipo_capa || "---"}</p>
           <p><strong>Status:</strong> ${encomenda.status || "---"}</p>
-          <a class="botao-verde" href="acompanhar.html?codigo=${encomenda.codigo_rastreio}">📦 Acompanhar este pedido</a>
+          <a class="botao-verde" href="acompanhar.html?codigo=${encomenda.codigo_rastreio}">
+            📦 Acompanhar este pedido
+          </a>
         </div>
       `;
     }
 
-    async function buscarEncomendaPorCodigo() {
-      const codigo = document.getElementById("codigo").value.trim().toUpperCase();
-      const resultado = document.getElementById("resultado");
-      if (!codigo) return resultado.innerHTML = '<p>Digite um código válido.</p>';
+    async function buscarPorCodigo() {
+      const codigo = document.getElementById("codigo").value.trim();
+      if (!codigo) return alert("Digite o código de rastreio.");
 
-      resultado.innerHTML = '<p>🔍 Buscando pedido...</p>';
-      const { data, error } = await supabase.from("encomendas").select("*").eq("codigo_rastreio", codigo).single();
+      resultado.innerHTML = `<p>🔄 Buscando...</p>`;
+      resultado.style.display = "block";
+
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("*")
+        .eq("codigo_rastreio", codigo)
+        .single();
 
       if (error || !data) {
-        resultado.innerHTML = '<p>Nenhuma encomenda encontrada com esse código. 😢</p>';
+        resultado.innerHTML = "❌ Nenhum pedido encontrado com esse código.";
       } else {
         resultado.innerHTML = formatarPedido(data);
       }
     }
 
-    async function buscarEncomendasPorEmail() {
+    async function buscarPorEmail() {
       const email = document.getElementById("email").value.trim();
-      const resultado = document.getElementById("resultado");
-      if (!email) return resultado.innerHTML = '<p>Digite um e-mail válido.</p>';
+      if (!email) return alert("Digite o e-mail.");
 
-      resultado.innerHTML = '<p>📦 Buscando suas encomendas...</p>';
-      const { data, error } = await supabase.from("encomendas").select("*").eq("email", email).order("data_envio", { ascending: false });
+      resultado.innerHTML = `<p>🔄 Buscando...</p>`;
+      resultado.style.display = "block";
 
-      if (error || !data || data.length === 0) {
-        resultado.innerHTML = '<p>Nenhuma encomenda encontrada com esse e-mail. 😢</p>';
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("*")
+        .eq("email", email)
+        .order("data_envio", { ascending: false });
+
+      if (error || !data.length) {
+        resultado.innerHTML = "❌ Nenhum pedido encontrado para esse e-mail.";
       } else {
-        resultado.innerHTML = data.map(formatarPedido).join('');
+        resultado.innerHTML = data.map(formatarPedido).join("");
       }
     }
   </script>
