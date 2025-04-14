@@ -83,8 +83,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
   const supabaseUrl = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
   const form = document.getElementById("form-encomenda");
 
@@ -101,22 +101,18 @@
       referencias: document.getElementById("referencias").value,
       cores: document.getElementById("cores").value,
       observacoes: document.getElementById("observacoes").value,
-      tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || ""
+      tipo_capa: document.querySelector('input[name="tipo_capa"]:checked')?.value || "",
+      data_envio: new Date().toISOString()
     };
 
-    const { error } = await supabase.from("encomendas").insert([{
-  nome,
-  email,
-  titulo_livro: titulo,
-  genero,
-  sinopse,
-  referencias,
-  tipo_capa,
-  instagram,
-  cores,
-  observacoes,
-  data_envio: new Date().toISOString() // adiciona a data atual
-}]);
+    const { error } = await supabase.from("encomendas").insert([dados]);
 
-</body>
-</html>
+    if (error) {
+      alert("❌ Algo deu errado ao enviar sua encomenda.");
+      console.error("Erro Supabase:", error);
+    } else {
+      alert("✅ Sua encomenda foi enviada com sucesso! Obrigada 💖");
+      form.reset();
+    }
+  });
+</script>
