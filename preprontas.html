@@ -54,12 +54,12 @@
   );
 
   function transformarLinkDrive(link) {
-    const match = link.match(/\/d\/(.*?)\//);
-    if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    return link;
+  const match = link.match(/\/file\/d\/([^/]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
+  return link;
+}
 
   async function carregarCapas() {
     const { data, error } = await client
