@@ -68,43 +68,26 @@
   <div class="admin-container">
     <h2>Área Administrativa 💼</h2>
 
-    <form id="form-cadastro">
-      <label for="email-cadastro">Seu e-mail</label>
-      <input type="email" id="email-cadastro" required />
-      <label for="senha-cadastro">Senha</label>
-      <input type="password" id="senha-cadastro" required />
-      <button type="submit">Cadastrar-se ✨</button>
-      <div class="mensagem" id="mensagem-cadastro"></div>
-    </form>
-
-    <hr style="margin: 30px 0;">
-
+    <!-- Formulário de Login -->
     <form id="form-login">
       <label for="email-login">Seu e-mail</label>
       <input type="email" id="email-login" required />
+
       <label for="senha-login">Senha</label>
       <input type="password" id="senha-login" required />
+
       <button type="submit">Entrar no painel 💖</button>
       <div class="mensagem" id="mensagem-login"></div>
     </form>
   </div>
 
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const client = supabase.createClient(
       'https://tcnonaprqfcpqmscrbkg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
-
-    document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email-cadastro').value;
-      const senha = document.getElementById('senha-cadastro').value;
-
-      const { data, error } = await client.auth.signUp({ email, password: senha });
-      document.getElementById('mensagem-cadastro').textContent =
-        error ? 'Erro: ' + error.message : 'Cadastro feito! Verifique seu e-mail.';
-    });
 
     document.getElementById('form-login').addEventListener('submit', async (e) => {
       e.preventDefault();
