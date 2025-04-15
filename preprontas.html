@@ -30,6 +30,7 @@
   </header>
 
 <!-- CONTEÚDO DA PÁGINA PRE-PRONTAS -->
+<<!-- CONTEÚDO DA PÁGINA PRE-PRONTAS -->
 <section class="preprontas-container">
     <div class="cabecalho-preprontas">
       <h2>🌸 Capas Pré-Prontas Exclusivas</h2>
@@ -41,39 +42,58 @@
     </div>
   </section>
   
-    <div class="galeria-preprontas">
+  <div class="galeria-preprontas" id="lista-de-capas">
+    <!-- Capas serão carregadas aqui automaticamente -->
+  </div>
   
-      <!-- CAPA 1 -->
-      <div class="capa-item">
-        <img src="assets/preprontas/capa1.jpg" alt="Capa Pré-Pronta 1">
-        <div class="botoes-opcoes">
-          <a href="#" class="btn-automatica">R$ 25,00<br><small>Envio automático</small></a>
-          <a href="modificar.html" class="btn-modificada">R$ 45,00<br><small>Receba com modificação</small></a>
-        </div>
-      </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabase = supabase.createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    );
   
-      <!-- CAPA 2 -->
-      <div class="capa-item">
-        <img src="assets/preprontas/capa2.jpg" alt="Capa Pré-Pronta 2">
-        <div class="botoes-opcoes">
-          <a href="#" class="btn-automatica">R$ 25,00<br><small>Envio automático</small></a>
-          <a href="modificar.html" class="btn-modificada">R$ 45,00<br><small>Receba com modificação</small></a>
-        </div>
-      </div>
+    // Função para transformar link do Drive
+    function transformarLinkDrive(link) {
+      const match = link.match(/\/d\/(.*?)\//);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+      return link;
+    }
   
-      <!-- CAPA 3 -->
-      <div class="capa-item">
-        <img src="assets/preprontas/capa3.jpg" alt="Capa Pré-Pronta 3">
-        <div class="botoes-opcoes">
-          <a href="#" class="btn-automatica">R$ 25,00<br><small>Envio automático</small></a>
-          <a href="modificar.html" class="btn-modificada">R$ 45,00<br><small>Receba com modificação</small></a>
-        </div>
-      </div>
+    async function carregarCapas() {
+      const { data, error } = await supabase.from('preprontas').select('*');
   
-      <!-- Adicione mais .capa-item conforme necessário -->
+      if (error) {
+        console.error('Erro ao buscar capas:', error.message);
+        return;
+      }
   
-    </div>
-  </section>  
+      const lista = document.getElementById("lista-de-capas");
+      lista.innerHTML = ""; // limpa antes de inserir
+  
+      data.forEach(capa => {
+        const imagem = transformarLinkDrive(capa.imagem_url);
+        lista.innerHTML += `
+          <div class="capa-item">
+            <img src="${imagem}" alt="${capa.titulo}">
+            <h3>${capa.titulo}</h3>
+            <div class="botoes-opcoes">
+              <a href="${capa.link_pagamento_1}" class="btn-automatica" target="_blank">
+                R$ 25,00<br><small>Envio automático</small>
+              </a>
+              <a href="${capa.link_pagamento_2}" class="btn-modificada" target="_blank">
+                R$ 45,00<br><small>Receba com modificação</small>
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+  
+    carregarCapas();
+  </script>  
   </main>
   
   <!-- Rodapé -->
