@@ -74,7 +74,7 @@
     const { data, error } = await client
       .from('preprontas')
       .select('*')
-      .eq('disponivel', true)
+      .eq('disponivel', true).or('disponivel.eq.true,disponivel.eq.1')
       .order('data_cadastro', { ascending: false });
 
     if (error) {
