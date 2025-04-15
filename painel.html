@@ -92,14 +92,15 @@
     const capa_url = document.getElementById('imagem').value;
     const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
 
-    const { error } = await client.from('preprontas').insert([{
-      titulo,
-      codigo,
-      capa_url,
-      status: 'rascunho',
-      disponivel: true,
-      data_cadastro: new Date().toISOString()
-    }]);
+    const { error } = await supabase.from('preprontas').insert([{
+  titulo,
+  codigo,
+  capa_url,
+  status_publicacao: 'rascunho', // <- aqui está o nome certo agora
+  disponivel: true,
+  data_cadastro: new Date().toISOString()
+}]);
+
 
     const msg = document.getElementById('mensagem-envio');
     msg.textContent = error ? 'Erro: ' + error.message : 'Capa salva como rascunho com sucesso!';
