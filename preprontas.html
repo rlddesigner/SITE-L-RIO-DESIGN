@@ -72,10 +72,8 @@
   // 3. Função que carrega os dados
   async function carregarCapas() {
     const { data, error } = await client
-      .from('preprontas')
-      .select('*')
-      .eq('disponivel', true).or('disponivel.eq.true,disponivel.eq.1')
-      .order('data_cadastro', { ascending: false });
+    .from('preprontas')
+    .select('*')
 
     if (error) {
       console.error('Erro ao buscar capas:', error.message);
@@ -113,6 +111,7 @@
     </div>
   `;
 });
+}
 
   carregarCapas();
 </script>
