@@ -95,7 +95,12 @@
       if (!capa.disponivel) {
         statusTexto = `<p class="status indisponivel">❌ Indisponível</p>`;
       } else if (capa.reservada && expiraEm && expiraEm > agora) {
-        statusTexto = `<p class="status reservada">⏳ Reservada temporariamente</p>`;
+        statusTexto = `
+  <div class="status reservada">
+    <p>⏳ Reservada temporariamente</p>
+    <small class="expira-msg">Caso o cliente não finalize a compra, ela voltará a ficar disponível em alguns minutos.</small>
+  </div>
+`;
       } else {
         statusTexto = `<p class="status disponivel">✔️ Disponível</p>`;
         botoes = `
@@ -280,11 +285,16 @@
   color: #d32f2f; /* vermelho */
 }
 .status.reservada {
-  color: #f57c00; /* laranja */
+  color: #c47f00;
+  text-align: center;
 }
 
-
-
+.expira-msg {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 4px;
+  display: block;
+}
 
 .btn-automatica,
 .btn-modificada {
