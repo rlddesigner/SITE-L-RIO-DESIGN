@@ -54,49 +54,49 @@
     );
   
     function transformarLinkDrive(link) {
-      const match = link.match(/\/file\/d\/([^/]+)/);
-      if (match && match[1]) {
-        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-      }
-      return link;
-    }
-  
-    async function carregarCapas() {
-      const { data, error } = await client
-        .from('preprontas')
-        .select('*')
-        .eq('disponivel', true)
-        .order('data_cadastro', { ascending: false });
-  
-      if (error) {
-        console.error('Erro ao buscar capas:', error.message);
-        return;
-      }
-  
-      const lista = document.getElementById("lista-de-capas");
-      lista.innerHTML = "";
-  
-      data.forEach(capa => {
-        const imagemConvertida = transformarLinkDrive(capa.capa_url);
-  
-        lista.innerHTML += `
-          <div class="capa-item">
-            <img src="${imagemConvertida}" alt="${capa.titulo}">
-            <h3>${capa.titulo}</h3>
-            <div class="botoes-opcoes">
-              <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
-                R$ 25,00<br><small>Envio automático</small>
-              </a>
-              <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
-                R$ 45,00<br><small>Receba com modificação</small>
-              </a>
-            </div>
-          </div>
-        `;
-      });
-    }
-  
-    carregarCapas();
+  const match = link.match(/\/file\/d\/([^/]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  }
+  return link;
+}
+
+async function carregarCapas() {
+  const { data, error } = await supabase
+    .from('preprontas')
+    .select('*')
+    .eq('disponivel', true)
+    .order('data_cadastro', { ascending: false });
+
+  if (error) {
+    console.error('Erro ao buscar capas:', error.message);
+    return;
+  }
+
+  const lista = document.getElementById("lista-de-capas");
+  lista.innerHTML = "";
+
+  data.forEach(capa => {
+    const imagemConvertida = transformarLinkDrive(capa.capa_url);
+
+    lista.innerHTML += `
+      <div class="capa-item">
+        <img src="${imagemConvertida}" alt="${capa.titulo}">
+        <h3>${capa.titulo}</h3>
+        <div class="botoes-opcoes">
+          <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
+            R$ 25,00<br><small>Envio automático</small>
+          </a>
+          <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
+            R$ 45,00<br><small>Receba com modificação</small>
+          </a>
+        </div>
+      </div>
+    `;
+  });
+}
+
+carregarCapas();
   </script>
   
     
