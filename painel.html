@@ -87,31 +87,38 @@
   </div>
 
   <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
     const supabase = supabase.createClient(
       'https://tcnonaprqfcpqmscrbkg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
-
+  
     document.getElementById('form-capa').addEventListener('submit', async (e) => {
       e.preventDefault();
       const titulo = document.getElementById('titulo').value;
-      const link_pagamento1 = document.getElementById('link_pagamento1').value;
-      const link_pagamento2 = document.getElementById('link_pagamento2').value;
+      const link_pagamento_rapido = document.getElementById('link_pagamento1').value;
+      const link_pagamento_personalizado = document.getElementById('link_pagamento2').value;
       const link_arquivos = document.getElementById('link_arquivos').value;
-      const imagem = document.getElementById('imagem').value;
-
+      const capa_url = document.getElementById('imagem').value;
+  
       const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
-
-      const { error } = await supabase.from('capas_preprontas').insert([
-        { titulo, codigo, link_pagamento1, link_pagamento2, link_arquivos, imagem, disponivel: true }
-      ]);
-
+  
+      const { error } = await supabase.from('preprontas').insert([{
+        titulo,
+        codigo,
+        capa_url,
+        link_pagamento_rapido,
+        link_pagamento_personalizado,
+        link_arquivos,
+        disponivel: true,
+        data_cadastro: new Date().toISOString()
+      }]);
+  
       const msg = document.getElementById('mensagem-envio');
       msg.textContent = error ? 'Erro: ' + error.message : 'Capa enviada com sucesso!';
       if (!error) document.getElementById('form-capa').reset();
     });
   </script>
+  
 </body>
 </html>
