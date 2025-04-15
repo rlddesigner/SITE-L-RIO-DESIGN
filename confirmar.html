@@ -54,7 +54,7 @@
       <li>✅ Você poderá aprovar ou sugerir ajustes.</li>
       <li>💳 O pagamento só será feito quando a capa for aprovada por você!</li>
     </ul>
-    <p style="margin-top: 1rem;">💰 Valor estimado: <strong id="preco"></strong></p>
+    <p style="margin-top: 1rem;">💰 Valor estimado: <strong id="preco">Carregando...</strong></p>
 
     <button class="botao-confirmar" onclick="confirmarPedido()">✅ Confirmar Encomenda</button>
     <div class="mensagem" id="mensagem"></div>
@@ -62,6 +62,7 @@
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
     const supabase = createClient(
       'https://tcnonaprqfcpqmscrbkg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
@@ -83,40 +84,40 @@
         console.error(error);
       } else {
         document.getElementById("mensagem").textContent = "✅ Pedido confirmado com sucesso!";
+        setTimeout(() => {
+          window.location.href = `status.html?codigo=${codigo}`;
+        }, 2000);
       }
     }
 
-    // opcional: exibe o valor aproximado
     async function buscarPreco() {
-  if (!codigo) return;
+      if (!codigo) return;
 
-  const { data, error } = await supabase
-    .from("encomendas")
-    .select("tipo_capa, orelhas")
-    .eq("codigo_rastreio", codigo)
-    .single();
+      const { data, error } = await supabase
+        .from("encomendas")
+        .select("tipo_capa, orelhas")
+        .eq("codigo_rastreio", codigo)
+        .single();
 
-  if (error || !data) {
-    document.getElementById("preco").textContent = "indisponível";
-    return;
-  }
+      const precoEl = document.getElementById("preco");
 
-  const tipo = data.tipo_capa || "";
-  const orelhas = data.orelhas || "nao"; // força como "nao" se nulo/undefined
+      if (error || !data) {
+        precoEl.textContent = "indisponível";
+        return;
+      }
 
-  let preco = 0;
+      let preco = 0;
+      const tipo = data.tipo_capa || "";
+      const orelhas = data.orelhas || "nao";
 
-  if (tipo === "ebook") {
-    preco = 60;
-  } else if (tipo === "fisica") {
-    preco = orelhas.toLowerCase() === "sim" ? 40 : 25;
-  } else if (tipo === "ambas") {
-    preco = 100;
-  }
+      if (tipo === "ebook") preco = 60;
+      else if (tipo === "fisica") preco = orelhas.toLowerCase() === "sim" ? 40 : 25;
+      else if (tipo === "ambas") preco = 100;
 
-  document.getElementById("preco").textContent = `R$ ${preco},00`;
-}
+      precoEl.textContent = `R$ ${preco},00`;
+    }
 
+    buscarPreco(); // chama quando a página carrega
   </script>
 </body>
 </html>
