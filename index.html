@@ -327,5 +327,21 @@ window.onload = function () {
     </div>
     <p class="creditos">© 2025 Llirio Design — Todos os direitos reservados.</p>
   </footer>
+
+  <script>
+    const depoimentos = document.querySelectorAll("#carrossel-depoimentos p");
+    let indexAtual = 0;
+  
+    function mostrarProximo() {
+      depoimentos[indexAtual].classList.remove("ativo");
+      indexAtual = (indexAtual + 1) % depoimentos.length;
+      depoimentos[indexAtual].classList.add("ativo");
+    }
+  
+    // Inicializa com o primeiro visível
+    depoimentos[0].classList.add("ativo");
+    setInterval(mostrarProximo, 3000); // troca a cada 3 segundos
+  </script>
+  
 </body>
 </html>
