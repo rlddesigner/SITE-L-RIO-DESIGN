@@ -89,25 +89,27 @@
     // opcional: exibe o valor aproximado
     async function buscarPreco() {
   if (!codigo) return;
+
   const { data, error } = await supabase
     .from("encomendas")
     .select("tipo_capa, orelhas")
     .eq("codigo_rastreio", codigo)
     .single();
 
-  if (error || !data || !data.tipo_capa) {
+  if (error || !data) {
     document.getElementById("preco").textContent = "indisponível";
     return;
   }
 
+  const tipo = data.tipo_capa || "";
+  const orelhas = data.orelhas || "nao"; // força como "nao" se nulo/undefined
+
   let preco = 0;
-  const tipo = data.tipo_capa;
-  const orelhas = data.orelhas || "nao"; // se não tiver orelhas, trata como "não"
 
   if (tipo === "ebook") {
     preco = 60;
   } else if (tipo === "fisica") {
-    preco = orelhas === "sim" ? 40 : 25;
+    preco = orelhas.toLowerCase() === "sim" ? 40 : 25;
   } else if (tipo === "ambas") {
     preco = 100;
   }
