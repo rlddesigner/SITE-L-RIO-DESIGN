@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #fffaf6;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+    }
+    .painel-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      color: #da743c;
+      margin-bottom: 30px;
+    }
+    form label {
+      font-weight: bold;
+      color: #444;
+      margin-top: 20px;
+      display: block;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 30px;
+      background-color: #F27C46;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 12px 20px;
+      font-weight: bold;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #da743c;
+    }
+    .mensagem {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #da743c;
+    }
+  </style>
+</head>
+<body>
+  <div class="painel-container">
+    <h2>Subir Capa Pré-Pronta</h2>
+
+    <form id="form-capa">
+      <label for="titulo">Título da Capa:</label>
+      <input type="text" id="titulo" required>
+
+      <label for="link_pagamento1">Link Pagamento Automático (R$25):</label>
+      <input type="url" id="link_pagamento1" required>
+
+      <label for="link_pagamento2">Link Pagamento com Modificação (R$45):</label>
+      <input type="url" id="link_pagamento2" required>
+
+      <label for="link_arquivos">Link dos Arquivos (Drive):</label>
+      <input type="url" id="link_arquivos" required>
+
+      <label for="imagem">URL da Imagem da Capa:</label>
+      <input type="url" id="imagem" required>
+
+      <button type="submit">Enviar Capa</button>
+    </form>
+
+    <div class="mensagem" id="mensagem-envio"></div>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabase = supabase.createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+    );
+
+    document.getElementById('form-capa').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const titulo = document.getElementById('titulo').value;
+      const link_pagamento1 = document.getElementById('link_pagamento1').value;
+      const link_pagamento2 = document.getElementById('link_pagamento2').value;
+      const link_arquivos = document.getElementById('link_arquivos').value;
+      const imagem = document.getElementById('imagem').value;
+
+      const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
+
+      const { error } = await supabase.from('capas_preprontas').insert([
+        { titulo, codigo, link_pagamento1, link_pagamento2, link_arquivos, imagem, disponivel: true }
+      ]);
+
+      const msg = document.getElementById('mensagem-envio');
+      msg.textContent = error ? 'Erro: ' + error.message : 'Capa enviada com sucesso!';
+      if (!error) document.getElementById('form-capa').reset();
+    });
+  </script>
+</body>
+</html>
