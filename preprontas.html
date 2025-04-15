@@ -88,26 +88,22 @@
     data.forEach(capa => {
       const imagemConvertida = transformarLinkDrive(capa.capa_url);
 
-      const botoes = capa.disponivel
-    ? `
-      <div class="botoes-opcoes">
-        <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
-          R$ 25,00<br><small>Envio automático</small>
-        </a>
-        <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
-          R$ 45,00<br><small>Receba com modificação</small>
-        </a>
-      </div>`
-    : `<p class="vendida">❌ Capa já vendida</p>`;
-
-  lista.innerHTML += `
-    <div class="capa-item">
-      <img src="${imagemConvertida}" alt="${capa.titulo}">
-      <h3>${capa.titulo}</h3>
-      ${botoes}
-    </div>
-  `;
-});
+      lista.innerHTML += `
+        <div class="capa-item">
+          <img src="${imagemConvertida}" alt="${capa.titulo}">
+          <h3>${capa.titulo}</h3>
+          <div class="botoes-opcoes">
+            <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
+              R$ 25,00<br><small>Envio automático</small>
+            </a>
+            <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
+              R$ 45,00<br><small>Receba com modificação</small>
+            </a>
+          </div>
+        </div>
+      `;
+    });
+  }
 
   // 4. Chama a função quando a página carregar
   carregarCapas();
@@ -266,11 +262,6 @@
   background-color: #b63854;
 }
 
-.vendida {
-  color: #999;
-  font-weight: bold;
-  margin-top: 10px;
-}
 
   </style>
   
