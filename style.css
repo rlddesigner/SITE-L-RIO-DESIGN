@@ -824,3 +824,6 @@ h1 {
   color: #555;
   margin-top: 2rem;
 }
+.carrossel-wrapper:hover {
+  animation-play-state: paused;
+}

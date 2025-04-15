@@ -165,36 +165,49 @@
   margin-bottom: 30px;
   color: #2e7d5b;
 }
-.depoimento {
+.carrossel-depoimentos {
+  overflow: hidden;
+  width: 100%;
+  background-color: #fffaf7;
+  padding: 2rem 0;
+  border-top: 1px solid #ffddb5;
+  border-bottom: 1px solid #ffddb5;
+}
+
+.carrossel-wrapper {
+  display: flex;
+  gap: 2rem;
+  animation: deslizar 25s linear infinite;
+  width: max-content;
+}
+
+.depoimento-item {
+  min-width: 300px;
+  max-width: 300px;
   background-color: #fffaf7;
   border: 1px solid #ffd8b5;
-  padding: 2rem;
-  margin: 3rem auto;
-  max-width: 600px;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(255, 179, 129, 0.2);
-  text-align: center;
+  border-radius: 12px;
+  padding: 1.2rem;
   font-family: 'Segoe UI', sans-serif;
-}
-
-#carrossel-depoimentos p {
-  font-size: 1.1rem;
-  line-height: 1.5;
-  display: none;
-  transition: opacity 0.5s ease-in-out;
+  font-size: 1rem;
+  text-align: center;
   color: #444;
+  box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
+  flex-shrink: 0;
 }
 
-#carrossel-depoimentos p span {
+.depoimento-item span {
   display: block;
-  margin-top: 10px;
+  margin-top: 0.7rem;
   font-weight: bold;
   color: #2e7d5b;
 }
 
-#carrossel-depoimentos p.ativo {
-  display: block;
+@keyframes deslizar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
+
 
 .chamada-encomenda {
   background-color: #ffe8d9;
