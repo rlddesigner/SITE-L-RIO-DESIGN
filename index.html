@@ -69,14 +69,24 @@
 <!-- DEPOIMENTO FOFO -->
 <!-- CARROSSEL DE AVALIAÇÕES ESTILO FAIXA -->
 <section class="carrossel-depoimentos">
-  <div class="carrossel-wrapper" id="carrossel">
-    <div class="depoimento-item">“Obgd pelo trabalho maravilhoso 😍❤️”<br><span>— @tombentoautor</span></div>
-    <div class="depoimento-item">“Isso não é uma capa, é um evento! 🖤🖤”<br><span>— @gabimotaautora</span></div>
-    <div class="depoimento-item">“PORRAAAAAA QUE PERFEIÇÃO”<br><span>— @thigilbooks</span></div>
-    <div class="depoimento-item">“Suas capas são lindas! 😍😍👏👏”<br><span>— @lov3books7</span></div>
-    <div class="depoimento-item">“Faz um curso, eu compro. Só capa incrível. Mds ❤️”<br><span>— @aquarinedesigns</span></div>
+  <div class="carrossel-wrapper">
+    <div class="carrossel-conteudo">
+      <div class="depoimento-item">“Obgd pelo trabalho maravilhoso 😍❤️”<br><span>— @tombentoautor</span></div>
+      <div class="depoimento-item">“Isso não é uma capa, é um evento! 🖤🖤”<br><span>— @gabimotaautora</span></div>
+      <div class="depoimento-item">“PORRAAAAAA QUE PERFEIÇÃO”<br><span>— @thigilbooks</span></div>
+      <div class="depoimento-item">“Suas capas são lindas! 😍😍👏👏”<br><span>— @lov3books7</span></div>
+      <div class="depoimento-item">“Faz um curso, eu compro. Só capa incrível. Mds ❤️”<br><span>— @aquarinedesigns</span></div>
+
+      <!-- duplicado pra looping infinito -->
+      <div class="depoimento-item">“Obgd pelo trabalho maravilhoso 😍❤️”<br><span>— @tombentoautor</span></div>
+      <div class="depoimento-item">“Isso não é uma capa, é um evento! 🖤🖤”<br><span>— @gabimotaautora</span></div>
+      <div class="depoimento-item">“PORRAAAAAA QUE PERFEIÇÃO”<br><span>— @thigilbooks</span></div>
+      <div class="depoimento-item">“Suas capas são lindas! 😍😍👏👏”<br><span>— @lov3books7</span></div>
+      <div class="depoimento-item">“Faz um curso, eu compro. Só capa incrível. Mds ❤️”<br><span>— @aquarinedesigns</span></div>
+    </div>
   </div>
 </section>
+
 
 <!-- ANIMAÇÕES E ESTILOS (CSS sugerido) -->
 <style>
@@ -166,23 +176,26 @@
 }
 .carrossel-depoimentos {
   overflow: hidden;
-  width: 100%;
   background-color: #fffaf7;
-  padding: 2rem 0;
   border-top: 1px solid #ffddb5;
   border-bottom: 1px solid #ffddb5;
+  padding: 2rem 0;
+  position: relative;
 }
 
 .carrossel-wrapper {
   display: flex;
+  width: 100%;
+}
+
+.carrossel-conteudo {
+  display: flex;
   gap: 2rem;
-  animation: deslizar 25s linear infinite;
-  width: max-content;
+  animation: rolar 40s linear infinite;
 }
 
 .depoimento-item {
   min-width: 300px;
-  max-width: 300px;
   background-color: #fffaf7;
   border: 1px solid #ffd8b5;
   border-radius: 12px;
@@ -202,9 +215,9 @@
   color: #2e7d5b;
 }
 
-@keyframes deslizar {
+@keyframes rolar {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  100% { transform: translateX(-50%); }
 }
 
 
