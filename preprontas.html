@@ -30,17 +30,17 @@
   </header>
 
 <!-- CONTEÚDO DA PÁGINA PRE-PRONTAS -->
-<<!-- CONTEÚDO DA PÁGINA PRE-PRONTAS -->
 <section class="preprontas-container">
     <div class="cabecalho-preprontas">
-      <h2>🌸 Capas Pré-Prontas Exclusivas</h2>
-      <p class="intro">Cada capa abaixo é única e vendida apenas uma vez! 💖</p>
+      <h2><span class="emoji">❀</span> Capas Pré-Prontas Exclusivas</h2>
+      <p class="intro-centralizada">Cada capa abaixo é única e vendida apenas uma vez! 💖</p>
       <p class="explicacao">
         Ao escolher <strong>R$ 25,00</strong>, você recebe automaticamente por e-mail todos os arquivos da capa, incluindo o arquivo editável (PSD), imagens e fontes.<br>
         Ao escolher <strong>R$ 45,00</strong>, você receberá a capa personalizada por mim até o final do dia, com o título e detalhes que você enviar.
       </p>
     </div>
   </section>
+  
   
   <div class="galeria-preprontas" id="lista-de-capas">
     <!-- Capas serão carregadas aqui automaticamente -->
@@ -50,10 +50,10 @@
   <script>
     const supabase = supabase.createClient(
       'https://tcnonaprqfcpqmscrbkg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
   
-    // Função para transformar link do Drive
+    // Converte apenas link de imagem (Drive) para visualização
     function transformarLinkDrive(link) {
       const match = link.match(/\/d\/(.*?)\//);
       if (match && match[1]) {
@@ -63,7 +63,11 @@
     }
   
     async function carregarCapas() {
-      const { data, error } = await supabase.from('preprontas').select('*');
+      const { data, error } = await supabase
+        .from('preprontas')
+        .select('*')
+        .eq('disponivel', true) // Só mostra se ainda estiver disponível
+        .order('data_cadastro', { ascending: false });
   
       if (error) {
         console.error('Erro ao buscar capas:', error.message);
@@ -71,19 +75,20 @@
       }
   
       const lista = document.getElementById("lista-de-capas");
-      lista.innerHTML = ""; // limpa antes de inserir
+      lista.innerHTML = "";
   
       data.forEach(capa => {
-        const imagem = transformarLinkDrive(capa.imagem_url);
+        const imagemConvertida = transformarLinkDrive(capa.capa_url);
+  
         lista.innerHTML += `
           <div class="capa-item">
-            <img src="${imagem}" alt="${capa.titulo}">
+            <img src="${imagemConvertida}" alt="${capa.titulo}">
             <h3>${capa.titulo}</h3>
             <div class="botoes-opcoes">
-              <a href="${capa.link_pagamento_1}" class="btn-automatica" target="_blank">
+              <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
                 R$ 25,00<br><small>Envio automático</small>
               </a>
-              <a href="${capa.link_pagamento_2}" class="btn-modificada" target="_blank">
+              <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
                 R$ 45,00<br><small>Receba com modificação</small>
               </a>
             </div>
@@ -93,7 +98,8 @@
     }
   
     carregarCapas();
-  </script>  
+  </script>
+    
   </main>
   
   <!-- Rodapé -->
@@ -133,19 +139,25 @@
   font-size: 2rem;
   margin-bottom: 12px;
   color: #222;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-.cabecalho-preprontas .intro {
-  font-size: 1.1rem;
+.emoji {
+  font-size: 1.8rem;
+  color: #f27cc0;
+}
+
+.intro-centralizada {
+  text-align: center;
+  font-size: 1.05rem;
+  margin-top: 10px;
   color: #444;
-  margin-bottom: 10px;
 }
 
-.cabecalho-preprontas .explicacao {
-  font-size: 0.95rem;
-  color: #666;
-  line-height: 1.6;
-}
 
 .galeria-preprontas {
   display: grid;
