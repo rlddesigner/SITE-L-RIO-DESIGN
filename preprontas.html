@@ -54,26 +54,24 @@
   // 1. Cria o supabase client
   const client = supabase.createClient(
     'https://tcnonaprqfcpqmscrbkg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-    );
-  
-    // 2. Função para converter link do Drive
-    function transformarLinkDrive(link) {
-  if (link.includes("drive.google.com")) {
-    const match = link.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
-    if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+  );
+
+  function transformarLinkDrive(link) {
+    if (link.includes("drive.google.com")) {
+      const match = link.match(/\/d\/([a-zA-Z0-9_-]{25,})/);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
     }
+    return link;
   }
-  return link; // se não for do Drive, retorna normal
-}
 
-
-  // 3. Função que carrega os dados
   async function carregarCapas() {
     const { data, error } = await client
-    .from('preprontas')
-    .select('*')
+      .from('preprontas')
+      .select('*')
+      .order('data_cadastro', { ascending: false });
 
     if (error) {
       console.error('Erro ao buscar capas:', error.message);
@@ -83,37 +81,42 @@
     const lista = document.getElementById("lista-de-capas");
     lista.innerHTML = "";
 
+    const agora = new Date();
+
     data.forEach(capa => {
-  const imagemConvertida = transformarLinkDrive(capa.capa_url);
+      const imagem = transformarLinkDrive(capa.capa_url);
+      const expiraEm = capa.reserva_expira_em ? new Date(capa.reserva_expira_em) : null;
 
-  const statusTexto = capa.disponivel
-    ? `<p class="status disponivel">✔️ Disponível</p>`
-    : `<p class="status indisponivel">❌ Indisponível</p>`;
+      let statusTexto = "";
+      let botoes = "";
 
-  const botoes = capa.disponivel
-    ? `
-      <div class="botoes-opcoes">
-        <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
-          R$ 25,00<br><small>Envio automático</small>
-        </a>
-        <a href="formulario.html?codigo=${capa.codigo}" class="btn-modificada">
-  R$ 45,00<br><small>Receba com modificação</small>
-</a>
-          R$ 45,00<br><small>Receba com modificação</small>
-        </a>
-      </div>`
-    : '';
+      if (!capa.disponivel) {
+        statusTexto = `<p class="status indisponivel">❌ Indisponível</p>`;
+      } else if (capa.reservada && expiraEm && expiraEm > agora) {
+        statusTexto = `<p class="status reservada">⏳ Reservada temporariamente</p>`;
+      } else {
+        statusTexto = `<p class="status disponivel">✔️ Disponível</p>`;
+        botoes = `
+          <div class="botoes-opcoes">
+            <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
+              R$ 25,00<br><small>Envio automático</small>
+            </a>
+            <a href="formulario.html?codigo=${capa.codigo}" class="btn-modificada">
+              R$ 45,00<br><small>Receba com modificação</small>
+            </a>
+          </div>`;
+      }
 
-  lista.innerHTML += `
-    <div class="capa-item">
-      <img src="${imagemConvertida}" alt="${capa.titulo}">
-      <h3>${capa.titulo}</h3>
-      ${statusTexto}
-      ${botoes}
-    </div>
-  `;
-});
-}
+      lista.innerHTML += `
+        <div class="capa-item">
+          <img src="${imagem}" alt="${capa.titulo}">
+          <h3>${capa.titulo}</h3>
+          ${statusTexto}
+          ${botoes}
+        </div>
+      `;
+    });
+  }
 
   carregarCapas();
 </script>
@@ -243,18 +246,19 @@
 }
 
 .status {
-  margin-top: 10px;
   font-weight: bold;
-  font-size: 0.95rem;
+  margin: 10px 0;
 }
-
 .status.disponivel {
   color: #2e7d32; /* verde */
 }
-
 .status.indisponivel {
-  color: #c62828; /* vermelho */
+  color: #d32f2f; /* vermelho */
 }
+.status.reservada {
+  color: #f57c00; /* laranja */
+}
+
 
 
 
