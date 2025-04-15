@@ -6,6 +6,38 @@
   <title>Acompanhar Encomenda ✨</title>
   <link rel="stylesheet" href="style.css">
   <style>
+
+.faixa-encomenda {
+  background-color: #ffece0;
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.faixa-encomenda p {
+  font-size: 1.6rem;
+  color: #d86624;
+  margin-bottom: 1rem;
+}
+
+.botao-laranja {
+  background-color: #f47b42;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.botao-laranja:hover {
+  background-color: #d8612c;
+}
+
     .acompanhar-container {
       max-width: 600px;
       margin: 4rem auto;
@@ -84,6 +116,11 @@
     </nav>
   </header>
 
+  <section class="faixa-encomenda">
+    <p>Ainda não fez sua encomenda?</p>
+    <a href="encomenda.html" class="botao-laranja">💌 Fazer encomenda</a>
+  </section>
+  
   <main class="acompanhar-container">
     <h1>📦 Acompanhe seu Pedido</h1>
     <p>Digite o <strong>código de rastreio</strong> para um pedido específico ou seu <strong>e-mail</strong> para ver todos os seus pedidos.</p>
