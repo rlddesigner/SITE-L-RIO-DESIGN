@@ -87,21 +87,30 @@
   </div>
 
   <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabase = supabase.createClient(
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabase = supabase.createClient(
       'https://tcnonaprqfcpqmscrbkg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
   
+    function transformarLinkDrive(link) {
+      const match = link.match(/\/d\/(.*?)\//);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+      return link;
+    }
+  
     document.getElementById('form-capa').addEventListener('submit', async (e) => {
       e.preventDefault();
+  
       const titulo = document.getElementById('titulo').value;
       const link_pagamento_rapido = document.getElementById('link_pagamento1').value;
       const link_pagamento_personalizado = document.getElementById('link_pagamento2').value;
       const link_arquivos = document.getElementById('link_arquivos').value;
-      const capa_url = document.getElementById('imagem').value;
-  
+      const capa_url_original = document.getElementById('imagem').value;
+      const capa_url = transformarLinkDrive(capa_url_original);
       const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
   
       const { error } = await supabase.from('preprontas').insert([{
@@ -116,10 +125,16 @@
       }]);
   
       const msg = document.getElementById('mensagem-envio');
-      msg.textContent = error ? 'Erro: ' + error.message : 'Capa enviada com sucesso!';
-      if (!error) document.getElementById('form-capa').reset();
+      if (error) {
+        console.error(error);
+        msg.textContent = 'Erro: ' + error.message;
+      } else {
+        msg.textContent = '✨ Capa enviada com sucesso!';
+        document.getElementById('form-capa').reset();
+      }
     });
   </script>
+  
   
 </body>
 </html>
