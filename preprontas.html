@@ -69,10 +69,10 @@
 
   async function carregarCapas() {
     const { data, error } = await client
-    .from('preprontas')
+  .from('preprontas')
   .select('*')
   .eq('disponivel', true)
-  .eq('status_publicacao', 'publicado') // <-- só traz se estiver publicado
+  .eq('status_publicacao', 'publicado')
   .order('data_cadastro', { ascending: false });
 
     if (error) {
