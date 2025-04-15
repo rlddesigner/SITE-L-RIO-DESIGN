@@ -67,11 +67,17 @@
 </section>
 
 <!-- DEPOIMENTO FOFO -->
+<!-- CARROSSEL DE AVALIAÇÕES -->
 <section class="depoimento">
-  <p>“Minha capa ficou ainda mais linda do que eu imaginava! A Lis é maravilhosa ✨”<br>
-  <span> — @autorafeliz</span>
-  </p>
+  <div id="carrossel-depoimentos">
+    <p class="ativo">“Obgd pelo trabalho maravilhoso 😍❤️”<br><span>— @tombentoautor</span></p>
+    <p>“Isso não é uma capa, é um evento! 🖤🖤”<br><span>— @gabimotaautora</span></p>
+    <p>“PORRAAAAAA QUE PERFEIÇÃO”<br><span>— @thigilbooks</span></p>
+    <p>“Suas capas são lindas! 😍😍👏👏”<br><span>— @lov3books7</span></p>
+    <p>“Faz um curso, eu compro. Só capa incrível. Mds ❤️”<br><span>— @aquarinedesigns</span></p>
+  </div>
 </section>
+
 
 <!-- ANIMAÇÕES E ESTILOS (CSS sugerido) -->
 <style>
@@ -160,19 +166,36 @@
   color: #2e7d5b;
 }
 .depoimento {
-  background-color: #fef6ef;
-  padding: 40px 30px;
-  font-style: italic;
-  font-size: 1.1rem;
+  background-color: #fffaf7;
+  border: 1px solid #ffd8b5;
+  padding: 2rem;
+  margin: 3rem auto;
+  max-width: 600px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(255, 179, 129, 0.2);
   text-align: center;
-  color: #555;
+  font-family: 'Segoe UI', sans-serif;
 }
-.depoimento span {
+
+#carrossel-depoimentos p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  display: none;
+  transition: opacity 0.5s ease-in-out;
+  color: #444;
+}
+
+#carrossel-depoimentos p span {
   display: block;
   margin-top: 10px;
   font-weight: bold;
   color: #2e7d5b;
 }
+
+#carrossel-depoimentos p.ativo {
+  display: block;
+}
+
 .chamada-encomenda {
   background-color: #ffe8d9;
   text-align: center;
