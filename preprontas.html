@@ -98,12 +98,13 @@
         statusTexto = `<p class="status disponivel">✔️ Disponível</p>`;
         botoes = `
           <div class="botoes-opcoes">
-            <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
-              R$ 25,00<br><small>Envio automático</small>
-            </a>
-            <a href="formulario.html?codigo=${capa.codigo}" class="btn-modificada">
+            <a href="#" onclick="reservarCapa('${capa.codigo}', '${capa.link_pagamento_rapido}')" class="btn-automatica">
+  R$ 25,00<br><small>Envio automático</small>
+</a>
+            <a href="#" onclick="reservarCapa('${capa.codigo}', 'formulario.html?codigo=${capa.codigo}')" class="btn-modificada">
   R$ 45,00<br><small>Receba com modificação</small>
 </a>
+
           </div>`;
       }
 
@@ -120,6 +121,27 @@
 
   carregarCapas();
 </script>
+  
+<script>
+    async function reservarCapa(codigoCapa, redirecionarPara) {
+      const agora = new Date();
+      const quinzeMinutosDepois = new Date(agora.getTime() + 15 * 60 * 1000); // 15 minutos
+  
+      const { error } = await client
+        .from('preprontas')
+        .update({
+          reservada: true,
+          reserva_expira_em: quinzeMinutosDepois.toISOString()
+        })
+        .eq('codigo', codigoCapa);
+  
+      if (error) {
+        alert("Erro ao reservar a capa: " + error.message);
+      } else {
+        window.open(redirecionarPara, '_blank'); // Abre o link do pagamento em nova aba
+      }
+    }
+  </script>
   
     
   </main>
