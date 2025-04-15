@@ -94,6 +94,18 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
   
+    let user = null;
+
+supabase.auth.getUser().then(({ data, error }) => {
+  if (error || !data.user) {
+    alert("Você precisa estar logado para usar o painel.");
+    window.location.href = "admin-login.html";
+  } else {
+    user = data.user;
+  }
+});
+
+
     function transformarLinkDrive(link) {
       const match = link.match(/\/d\/(.*?)\//);
       if (match && match[1]) {
@@ -114,16 +126,16 @@
       const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
   
       const { error } = await supabase.from('preprontas').insert([{
-        titulo,
-        codigo,
-        capa_url,
-        link_pagamento_rapido,
-        link_pagamento_personalizado,
-        link_arquivos,
-        disponivel: true,
-        data_cadastro: new Date().toISOString()
-      }]);
-  
+  titulo,
+  codigo,
+  capa_url,
+  link_pagamento_rapido,
+  link_pagamento_personalizado,
+  link_arquivos,
+  disponivel: true,
+  data_cadastro: new Date().toISOString(),
+  user_id: user.id // mesmo que a tabela não tenha essa coluna
+}]);
       const msg = document.getElementById('mensagem-envio');
       if (error) {
         console.error(error);
