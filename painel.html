@@ -78,35 +78,35 @@
   </div>
 
   <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const client = supabase.createClient(
-    'https://tcnonaprqfcpqmscrbkg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-  );
-
-  document.getElementById('form-capa').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const titulo = document.getElementById('titulo').value;
-    const capa_url = document.getElementById('imagem').value;
-    const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
-
-    const { error } = await cliente.from('preprontas').insert([{
-  titulo,
-  codigo,
-  capa_url,
-  status_publicacao: 'rascunho', // <- aqui está o nome certo agora
-  disponivel: true,
-  data_cadastro: new Date().toISOString()
-}]);
-
-
-    const msg = document.getElementById('mensagem-envio');
-    msg.textContent = error ? 'Erro: ' + error.message : 'Capa salva como rascunho com sucesso!';
-    if (!error) document.getElementById('form-capa').reset();
-  });
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const client = supabase.createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+    );
+  
+    document.getElementById('form-capa').addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      const titulo = document.getElementById('titulo').value;
+      const capa_url = document.getElementById('imagem').value;
+      const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
+  
+      const { error } = await client.from('preprontas').insert([{
+        titulo,
+        codigo,
+        capa_url,
+        status_publicacao: 'rascunho',
+        disponivel: true,
+        data_cadastro: new Date().toISOString()
+      }]);
+  
+      const msg = document.getElementById('mensagem-envio');
+      msg.textContent = error ? 'Erro: ' + error.message : 'Capa salva como rascunho com sucesso!';
+      if (!error) document.getElementById('form-capa').reset();
+    });
+  </script>
+  
 
 </body>
 </html>
