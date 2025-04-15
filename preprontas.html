@@ -53,16 +53,18 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
   );
 
+  // ✅ Converte link do Drive para exibição
   function transformarLinkDrive(link) {
-  const match = link.match(/\/file\/d\/([^/]+)/);
-  if (match && match[1]) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    const match = link.match(/\/file\/d\/([^/]+)/);
+    if (match && match[1]) {
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+    return link;
   }
-  return link;
-}
 
+  // ✅ Carrega as capas do Supabase e exibe na página
   async function carregarCapas() {
-    const { data, error } = await client
+    const { data, error } = await supabase
       .from('preprontas')
       .select('*')
       .eq('disponivel', true)
@@ -73,7 +75,7 @@
       return;
     }
 
-    console.log("Dados recebidos:", data); // <- TESTE
+    console.log("Dados recebidos:", data); // Só para teste
 
     const lista = document.getElementById("lista-de-capas");
     lista.innerHTML = "";
