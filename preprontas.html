@@ -146,83 +146,122 @@
 }
 
 .cabecalho-preprontas h2 {
-  font-size: 2rem;
-  margin-bottom: 12px;
+  font-size: 2.2rem;
+  margin-bottom: 14px;
   color: #222;
-  text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
+  font-weight: 800;
 }
 
 .emoji {
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #f27cc0;
 }
 
 .intro-centralizada {
   text-align: center;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   margin-top: 10px;
   color: #444;
+  font-weight: 500;
 }
 
+.explicacao {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin-top: 12px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+/* Galeria */
 .galeria-preprontas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
   justify-content: center;
-  padding: 30px 20px;
 }
 
+/* Cada item (card) */
 .capa-item {
   background: #fff;
-  padding: 15px;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  max-width: 350px;
-  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 20px;
+  transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.capa-item img:hover {
+  transform: scale(1.03);
+}
+
+/* Imagem da capa */
 .capa-item img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 14px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease;
+}
+
+/* Título da capa */
+.capa-item h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
   margin-bottom: 15px;
 }
 
-
+/* Botões */
 .botoes-opcoes {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .btn-automatica,
 .btn-modificada {
   display: inline-block;
-  padding: 12px;
-  border-radius: 25px;
+  padding: 14px 0;
+  border-radius: 30px;
   text-decoration: none;
   font-weight: bold;
   color: white;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
 }
 
 .btn-automatica {
   background-color: #f27c46;
 }
 
+.btn-automatica:hover {
+  background-color: #da743c;
+}
+
 .btn-modificada {
   background-color: #d34c66;
 }
+
+.btn-modificada:hover {
+  background-color: #b63854;
+}
+
 
   </style>
   
