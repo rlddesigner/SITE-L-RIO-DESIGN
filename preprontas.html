@@ -46,58 +46,65 @@
     <!-- Capas serão carregadas aqui automaticamente -->
   </div>
   
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script>
-    const client = supabase.createClient(
-      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+  <!-- Carrega a biblioteca -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<!-- Depois define tudo -->
+<script>
+  // 1. Cria o supabase client
+  const supabase = supabase.createClient(
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
   
-    function transformarLinkDrive(link) {
-  const match = link.match(/\/file\/d\/([^/]+)/);
-  if (match && match[1]) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-  return link;
-}
-
-async function carregarCapas() {
-  const { data, error } = await supabase
-    .from('preprontas')
-    .select('*')
-    .eq('disponivel', true)
-    .order('data_cadastro', { ascending: false });
-
-  if (error) {
-    console.error('Erro ao buscar capas:', error.message);
-    return;
+    // 2. Função para converter link do Drive
+  function transformarLinkDrive(link) {
+    const match = link.match(/\/file\/d\/([^/]+)/);
+    if (match && match[1]) {
+      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+    }
+    return link;
   }
 
-  const lista = document.getElementById("lista-de-capas");
-  lista.innerHTML = "";
+  // 3. Função que carrega os dados
+  async function carregarCapas() {
+    const { data, error } = await supabase
+      .from('preprontas')
+      .select('*')
+      .eq('disponivel', true)
+      .order('data_cadastro', { ascending: false });
 
-  data.forEach(capa => {
-    const imagemConvertida = transformarLinkDrive(capa.capa_url);
+    if (error) {
+      console.error('Erro ao buscar capas:', error.message);
+      return;
+    }
 
-    lista.innerHTML += `
-      <div class="capa-item">
-        <img src="${imagemConvertida}" alt="${capa.titulo}">
-        <h3>${capa.titulo}</h3>
-        <div class="botoes-opcoes">
-          <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
-            R$ 25,00<br><small>Envio automático</small>
-          </a>
-          <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
-            R$ 45,00<br><small>Receba com modificação</small>
-          </a>
+    const lista = document.getElementById("lista-de-capas");
+    lista.innerHTML = "";
+
+    data.forEach(capa => {
+      const imagemConvertida = transformarLinkDrive(capa.capa_url);
+
+      lista.innerHTML += `
+        <div class="capa-item">
+          <img src="${imagemConvertida}" alt="${capa.titulo}">
+          <h3>${capa.titulo}</h3>
+          <div class="botoes-opcoes">
+            <a href="${capa.link_pagamento_rapido}" class="btn-automatica" target="_blank">
+              R$ 25,00<br><small>Envio automático</small>
+            </a>
+            <a href="${capa.link_pagamento_personalizado}" class="btn-modificada" target="_blank">
+              R$ 45,00<br><small>Receba com modificação</small>
+            </a>
+          </div>
         </div>
-      </div>
-    `;
-  });
-}
+      `;
+    });
+  }
 
-carregarCapas();
-  </script>
+  // 4. Chama a função quando a página carregar
+  carregarCapas();
+</script>
   
     
   </main>
