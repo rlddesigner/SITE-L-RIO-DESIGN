@@ -155,10 +155,17 @@
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const codigo = urlParams.get('codigo');
-    if (codigo) document.getElementById('codigo').value = codigo;
+    // Pega o parâmetro da URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const codigoCapa = urlParams.get('codigo');
 
+  // Preenche o campo do código da capa
+  if (codigoCapa) {
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputCodigo = document.getElementById("codigo");
+      if (inputCodigo) inputCodigo.value = codigoCapa;
+    });
+  }
     function mostrarFonte() {
       const campo = document.getElementById('alterarFonte').value;
       document.getElementById('opcaoFonte').classList.toggle('oculto', campo !== 'sim');
