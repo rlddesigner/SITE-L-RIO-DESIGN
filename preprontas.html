@@ -29,36 +29,46 @@
     </nav>
   </header>
 
-  <!-- Conteúdo principal -->
-<main class="preprontas">
-    <section class="preprontas-container">
+<!-- SEÇÃO DE CAPAS PRÉ-PRONTAS -->
+<section class="preprontas-container">
+    <div class="cabecalho-preprontas">
       <h2>🌟 Capas Pré-Prontas Exclusivas</h2>
       <p class="intro">Cada capa abaixo é única e vendida apenas uma vez! 💖</p>
-      
-      <div class="explicacao">
-        <p><strong>💡 Como funciona?</strong></p>
-        <ul>
-          <li><strong>Compra Automática (R$ 25,00):</strong> você recebe imediatamente em seu e-mail todos os arquivos da capa, incluindo o editável (.PSD) e fontes. Você mesmo pode personalizar ✨</li>
-          <li><strong>Com Modificação (R$ 45,00):</strong> você preenche um formulário com as alterações desejadas (título, nome do autor, etc.) e recebe a versão final até o fim do dia 💌</li>
-        </ul>
-      </div>
+    </div>
   
-      <div class="capas-grid">
+    <div class="galeria-preprontas">
   
-        <div class="capa-card">
-          <img src="assets/preprontas/capa1.jpg" alt="Capa Pré-Pronta 1" />
-          <h3>Sombras do Inverno</h3>
-          <p class="preco">R$ 25,00 | R$ 45,00 com modificação</p>
-          <div class="botoes">
-            <button class="btn-comprar" onclick="comprarAutomatica('https://link-do-drive.com', 'cliente@email.com')">Comprar automática</button>
-            <a class="btn-modificar" href="modificar.html?capa=capa1.jpg">Solicitar com modificação</a>
-          </div>
+      <!-- CAPA 1 -->
+      <div class="capa-item">
+        <img src="assets/preprontas/capa1.jpg" alt="Capa Pré-Pronta 1">
+        <div class="botoes-opcoes">
+          <a href="#" class="btn-automatica">R$ 25,00<br><small>Envio automático por e-mail</small></a>
+          <a href="modificar.html" class="btn-modificada">R$ 45,00<br><small>Receba com modificação</small></a>
         </div>
-  
-        <!-- Copie e edite esse bloco para mais capas -->
-  
       </div>
-    </section>
+  
+      <!-- CAPA 2 -->
+      <div class="capa-item">
+        <img src="assets/preprontas/capa2.jpg" alt="Capa Pré-Pronta 2">
+        <div class="botoes-opcoes">
+          <a href="#" class="btn-automatica">R$ 25,00<br><small>Envio automático por e-mail</small></a>
+          <a href="modificar.html" class="btn-modificada">R$ 45,00<br><small>Receba com modificação</small></a>
+        </div>
+      </div>
+  
+      <!-- CAPA 3 -->
+      <div class="capa-item">
+        <img src="assets/preprontas/capa3.jpg" alt="Capa Pré-Pronta 3">
+        <div class="botoes-opcoes">
+          <a href="#" class="btn-automatica">R$ 25,00<br><small>Envio automático por e-mail</small></a>
+          <a href="modificar.html" class="btn-modificada">R$ 45,00<br><small>Receba com modificação</small></a>
+        </div>
+      </div>
+  
+      <!-- Adicione mais .capa-item conforme necessário -->
+    </div>
+  </section>
+  
   </main>
   
   <!-- Rodapé -->
@@ -82,76 +92,71 @@
   <!-- Estilo adicional para essa seção -->
   <style>
     .preprontas-container {
-      padding: 50px 20px;
-      background-color: #fffaf5;
-      text-align: center;
-    }
-    .intro {
-      font-size: 1.1rem;
-      margin-bottom: 20px;
-    }
-    .explicacao {
-      text-align: left;
-      max-width: 700px;
-      margin: 0 auto 40px;
-      background: #fff3ec;
-      padding: 20px;
-      border-radius: 12px;
-      color: #444;
-      font-size: 0.95rem;
-    }
-    .explicacao ul {
-      list-style: disc;
-      margin-left: 20px;
-    }
-    .capas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-    }
-    .capa-card {
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      padding: 20px;
-      transition: transform 0.3s ease;
-    }
-    .capa-card:hover {
-      transform: scale(1.03);
-    }
-    .capa-card img {
-      width: 100%;
-      border-radius: 12px;
-    }
-    .capa-card h3 {
-      margin: 10px 0 5px;
-      font-size: 1.2rem;
-      color: #f27c46;
-    }
-    .preco {
-      font-weight: bold;
-      color: #444;
-      font-size: 1rem;
-    }
-    .botoes {
-      margin-top: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .btn-comprar, .btn-modificar {
-      background: #f27c46;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .btn-modificar {
-      background: #444;
-    }
+  background: #FFF9F4;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.cabecalho-preprontas {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.cabecalho-preprontas h2 {
+  font-size: 2rem;
+  color: #333;
+}
+.cabecalho-preprontas .intro {
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.galeria-preprontas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  justify-items: center;
+}
+
+.capa-item {
+  background: #fff;
+  padding: 15px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 320px;
+}
+
+.capa-item img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.botoes-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-automatica,
+.btn-modificada {
+  display: inline-block;
+  padding: 12px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.btn-automatica {
+  background-color: #f27c46;
+}
+
+.btn-modificada {
+  background-color: #d34c66;
+}
+
   </style>
   
   </body>
