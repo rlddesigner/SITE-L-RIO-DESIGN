@@ -827,3 +827,41 @@ h1 {
 .carrossel-wrapper:hover {
   animation-play-state: paused;
 }
+.submenu {
+  position: relative;
+}
+
+.submenu .dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff9f4;
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  border: 1px solid #f2d4be;
+  border-radius: 10px;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.submenu:hover .dropdown {
+  display: block;
+}
+
+.submenu .dropdown li {
+  padding: 8px 20px;
+}
+
+.submenu .dropdown li a {
+  color: #2e7d5b;
+  text-decoration: none;
+  display: block;
+}
+
+.submenu .dropdown li a:hover {
+  background-color: #fef1e9;
+  border-radius: 5px;
+}
