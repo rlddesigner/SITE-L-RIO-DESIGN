@@ -92,7 +92,7 @@
     const capa_url = document.getElementById('imagem').value;
     const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
 
-    const { error } = await supabase.from('preprontas').insert([{
+    const { error } = await cliente.from('preprontas').insert([{
   titulo,
   codigo,
   capa_url,
