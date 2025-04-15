@@ -69,9 +69,11 @@
 
   async function carregarCapas() {
     const { data, error } = await client
-      .from('preprontas')
-      .select('*')
-      .order('data_cadastro', { ascending: false });
+    .from('preprontas')
+  .select('*')
+  .eq('disponivel', true)
+  .eq('status_publicacao', 'publicado') // <-- só traz se estiver publicado
+  .order('data_cadastro', { ascending: false });
 
     if (error) {
       console.error('Erro ao buscar capas:', error.message);
