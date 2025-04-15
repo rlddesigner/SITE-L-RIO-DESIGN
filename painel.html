@@ -30,7 +30,7 @@
       margin-top: 20px;
       display: block;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -68,82 +68,43 @@
       <label for="titulo">Título da Capa:</label>
       <input type="text" id="titulo" required>
 
-      <label for="link_pagamento1">Link Pagamento Automático (R$25):</label>
-      <input type="url" id="link_pagamento1" required>
-
-      <label for="link_pagamento2">Link Pagamento com Modificação (R$45):</label>
-      <input type="url" id="link_pagamento2" required>
-
-      <label for="link_arquivos">Link dos Arquivos (Drive):</label>
-      <input type="url" id="link_arquivos" required>
-
       <label for="imagem">URL da Imagem da Capa:</label>
-      <input type="url" id="imagem" required>
+      <input type="url" id="imagem" required placeholder="Link do Drive, Imgur, Pinterest...">
 
-      <button type="submit">Enviar Capa</button>
+      <button type="submit">Salvar como Rascunho</button>
     </form>
 
     <div class="mensagem" id="mensagem-envio"></div>
   </div>
 
   <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  // Corrigir escopo do createClient
-  const client = supabase.createClient(
-    'https://tcnonaprqfcpqmscrbkg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-  );
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const supabase = supabase.createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+    );
 
-  let user = null;
+    document.getElementById('form-capa').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  client.auth.getUser().then(({ data, error }) => {
-    if (error || !data.user) {
-      alert("Você precisa estar logado para usar o painel.");
-      window.location.href = "admin-login.html";
-    } else {
-      user = data.user;
-    }
-  });
+      const titulo = document.getElementById('titulo').value;
+      const capa_url = document.getElementById('imagem').value;
+      const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
 
-  document.getElementById('form-capa').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const titulo = document.getElementById('titulo').value;
-    const link_pagamento_rapido = document.getElementById('link_pagamento1').value;
-    const link_pagamento_personalizado = document.getElementById('link_pagamento2').value;
-    const link_arquivos = document.getElementById('link_arquivos').value;
-    const capa_url_original = document.getElementById('imagem').value;
+      const { error } = await supabase.from('preprontas').insert([{
+        titulo,
+        codigo,
+        capa_url,
+        status: 'rascunho',
+        disponivel: true,
+        data_cadastro: new Date().toISOString()
+      }]);
 
-    const capa_url = transformarLinkDrive(capa_url_original);
-    const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
-
-    const { error } = await client.from('preprontas').insert([{
-      titulo,
-      codigo,
-      capa_url,
-      link_pagamento_rapido,
-      link_pagamento_personalizado,
-      link_arquivos,
-      disponivel: true,
-      data_cadastro: new Date().toISOString()
-    }]);
-
-    const msg = document.getElementById('mensagem-envio');
-    msg.textContent = error ? 'Erro: ' + error.message : 'Capa enviada com sucesso!';
-    if (!error) document.getElementById('form-capa').reset();
-  });
-
-  function transformarLinkDrive(link) {
-    const match = link.match(/\/d\/(.*?)\//);
-    if (match && match[1]) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    return link;
-  }
-</script>
-
-
-  
-  
+      const msg = document.getElementById('mensagem-envio');
+      msg.textContent = error ? 'Erro: ' + error.message : 'Capa salva como rascunho com sucesso!';
+      if (!error) document.getElementById('form-capa').reset();
+    });
+  </script>
 </body>
 </html>
