@@ -56,7 +56,7 @@
     </ul>
     <p style="margin-top: 1rem;">💰 Valor estimado: <strong id="preco">Carregando...</strong></p>
 
-    <button class="botao-confirmar" onclick="confirmarPedido()">✅ Confirmar Encomenda</button>
+    <button class="botao-confirmar" id="btn-confirmar">✅ Confirmar Encomenda</button>
     <div class="mensagem" id="mensagem"></div>
   </main>
 
@@ -71,24 +71,27 @@
     const urlParams = new URLSearchParams(window.location.search);
     const codigo = urlParams.get('codigo');
 
-    async function confirmarPedido() {
-      if (!codigo) return alert("Código inválido.");
+    document.getElementById("btn-confirmar").addEventListener("click", async () => {
+  if (!codigo) {
+    alert("Código inválido.");
+    return;
+  }
 
-      const { error } = await supabase
-        .from('encomendas')
-        .update({ status: 'pedido confirmado - criação em andamento' })
-        .eq('codigo_rastreio', codigo);
+  const { error } = await supabase
+    .from("encomendas")
+    .update({ status: "pedido confirmado - criação em andamento" })
+    .eq("codigo_rastreio", codigo);
 
-      if (error) {
-        document.getElementById("mensagem").textContent = "❌ Ocorreu um erro. Tente novamente.";
-        console.error(error);
-      } else {
-        document.getElementById("mensagem").textContent = "✅ Pedido confirmado com sucesso!";
-        setTimeout(() => {
-          window.location.href = `status.html?codigo=${codigo}`;
-        }, 2000);
-      }
-    }
+  if (error) {
+    document.getElementById("mensagem").textContent = "❌ Ocorreu um erro. Tente novamente.";
+    console.error("Erro ao atualizar Supabase:", error);
+    return;
+  }
+
+  // Redireciona após sucesso
+  window.location.href = `status.html?codigo=${codigo}`;
+});
+
 
     async function buscarPreco() {
       if (!codigo) return;
