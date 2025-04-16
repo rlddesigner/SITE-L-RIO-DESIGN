@@ -71,6 +71,9 @@
       <label for="imagem">URL da Imagem da Capa:</label>
       <input type="url" id="imagem" required placeholder="Link do Drive, Imgur, Pinterest...">
 
+      <label for="linkArquivos">Link dos Arquivos da Capa (Google Drive):</label>
+<input type="url" id="linkArquivos" required placeholder="https://drive.google.com/..." />
+
       <button type="submit">Salvar como Rascunho</button>
     </form>
 
@@ -91,11 +94,13 @@
       const titulo = document.getElementById('titulo').value;
       const capa_url = document.getElementById('imagem').value;
       const codigo = 'CAPA-' + Math.floor(Math.random() * 100000);
+      const link_arquivos = document.getElementById('linkArquivos').value;
   
       const { error } = await client.from('preprontas').insert([{
         titulo,
         codigo,
         capa_url,
+        link_arquivos, // novo campo!
         status_publicacao: 'rascunho',
         disponivel: true,
         data_cadastro: new Date().toISOString()
