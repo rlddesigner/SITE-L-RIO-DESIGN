@@ -1,63 +1,90 @@
-// Arquivo: /functions/webhook.js
-
+const fetch = require('node-fetch');
 const { createClient } = require('@supabase/supabase-js');
-const { Resend } = require('resend');
 
-// Configurações do Supabase
-const SUPABASE_URL = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// Configuração do Resend
-const resend = new Resend('re_C6iVdbTW_FFXKQn4NzoseNR9YuEvAdzMv');
+const supabase = createClient(
+  'https://tcnonaprqfcpqmscrbkg.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+);
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-
   try {
-    const payload = JSON.parse(event.body);
-    const nomeProduto = payload.product_name;
-    const emailCliente = payload.customer_email;
+    const body = JSON.parse(event.body);
 
-    // Buscar a capa pelo código (nome do produto = código)
-    const { data, error } = await supabase
-      .from('preprontas')
-      .select('*')
-      .eq('codigo', nomeProduto)
-      .single();
-
-    if (error || !data) {
-      return { statusCode: 404, body: 'Capa não encontrada.' };
+    if (body.event !== 'purchase.approved') {
+      return {
+        statusCode: 200,
+        body: 'Evento ignorado (não é uma compra aprovada)',
+      };
     }
 
-    // Atualizar status para indisponível
-    await supabase
-      .from('preprontas')
-      .update({ disponivel: false })
-      .eq('codigo', nomeProduto);
+    const email = body.purchase.customer.email;
+    const codigo = body.purchase.product.name;
 
-    // Enviar e-mail com os arquivos
-    await resend.emails.send({
-      from: 'Lírio D. Design <contato@seusite.com>',
-      to: emailCliente,
-      subject: '🌸 Sua capa está pronta!',
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>Olá!</h2>
-          <p>Obrigado por adquirir a capa <strong>${data.titulo}</strong>.</p>
-          <p>Aqui estão os arquivos da sua capa: <a href="${data.link_arquivos}">Clique aqui para baixar</a>.</p>
-          <p>Se tiver qualquer dúvida, estou à disposição 💌</p>
-          <p>Com carinho,<br><strong>Lírio D. Design</strong></p>
-        </div>
-      `
+    // Buscar capa no Supabase
+    const { data: capa, error } = await supabase
+      .from('preprontas')
+      .select('*')
+      .eq('codigo', codigo)
+      .single();
+
+    if (error || !capa) {
+      return {
+        statusCode: 404,
+        body: 'Capa não encontrada no Supabase.',
+      };
+    }
+
+    const driveLink = capa.link_arquivos;
+
+    // Enviar e-mail via MailerSend
+    const resposta = await fetch('https://api.mailersend.com/v1/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer mlsn.9f858c0f036a94e459d89ae1445792ff7b96afb57354159f8f0da08ee26c1d66',
+      },
+      body: JSON.stringify({
+        from: {
+          email: 'no-reply@test-r83ql3ppwdmgzw1j.mlsender.net',
+          name: 'Lírio D. Design',
+        },
+        to: [{ email }],
+        subject: '📦 Sua capa pré-pronta está disponível!',
+        html: `
+          <h2 style="color:#217c67;">🌸 Obrigada por sua compra!</h2>
+          <p>Você pode baixar os arquivos da sua capa no link abaixo:</p>
+          <p><a href="${driveLink}" style="font-weight: bold;">▶ Acessar arquivos da capa</a></p>
+          <hr />
+          <h3>📌 Antes de editar no Photoshop:</h3>
+          <p>Instale as fontes primeiro. Elas estão em arquivos .zip na pasta.</p>
+          <ol>
+            <li>Extraia o ZIP</li>
+            <li>Dê dois cliques nas fontes</li>
+            <li>Clique em “Instalar”</li>
+          </ol>
+          <p>Com carinho, <br>Lírio D. Design</p>
+        `,
+      }),
     });
 
-    return { statusCode: 200, body: 'Email enviado com sucesso!' };
+    // Atualiza status da capa
+    await supabase
+      .from('preprontas')
+      .update({
+        disponivel: false,
+        reservada: true,
+        reserva_expira_em: null,
+      })
+      .eq('codigo', codigo);
 
+    return {
+      statusCode: 200,
+      body: 'E-mail enviado e capa atualizada!',
+    };
   } catch (err) {
-    console.error('Erro:', err);
-    return { statusCode: 500, body: 'Erro ao processar o webhook.' };
+    return {
+      statusCode: 500,
+      body: `Erro interno: ${err.message}`,
+    };
   }
 };
