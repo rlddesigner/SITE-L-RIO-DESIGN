@@ -7,6 +7,9 @@ const supabase = createClient(
 );
 
 exports.handler = async (event) => {
+  console.log("🔥 Webhook recebido:");
+  console.log(event.body);
+
   try {
     const body = JSON.parse(event.body);
 
@@ -20,7 +23,6 @@ exports.handler = async (event) => {
     const email = body.purchase.customer.email;
     const codigo = body.purchase.product.name;
 
-    // Buscar capa no Supabase
     const { data: capa, error } = await supabase
       .from('preprontas')
       .select('*')
@@ -36,8 +38,7 @@ exports.handler = async (event) => {
 
     const driveLink = capa.link_arquivos;
 
-    // Enviar e-mail via MailerSend
-    const resposta = await fetch('https://api.mailersend.com/v1/email', {
+    await fetch('https://api.mailersend.com/v1/email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,7 +68,6 @@ exports.handler = async (event) => {
       }),
     });
 
-    // Atualiza status da capa
     await supabase
       .from('preprontas')
       .update({
