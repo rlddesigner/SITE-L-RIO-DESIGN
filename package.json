@@ -1,0 +1,24 @@
+{
+  "name": "site-lirio-design",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlddesigner/SITE-L-RIO-DESIGN.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rlddesigner/SITE-L-RIO-DESIGN/issues"
+  },
+  "homepage": "https://github.com/rlddesigner/SITE-L-RIO-DESIGN#readme",
+  "description": "",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.6",
+    "nodemailer": "^6.9.4"
+  }
+}
