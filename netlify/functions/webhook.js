@@ -1,68 +1,63 @@
-// Arquivo: /functions/webhook.js (Netlify Functions)
-
-// Instalar antes: npm install @supabase/supabase-js node-fetch nodemailer
+// Arquivo: /functions/webhook.js
 
 const { createClient } = require('@supabase/supabase-js');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
+// Configurações do Supabase
 const SUPABASE_URL = 'https://tcnonaprqfcpqmscrbkg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Configuração do Resend
+const resend = new Resend('re_C6iVdbTW_FFXKQn4NzoseNR9YuEvAdzMv');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  const payload = JSON.parse(event.body);
-
-  // 1. Extrai o nome do produto e e-mail do cliente
-  const nomeProduto = payload.product_name;
-  const emailCliente = payload.customer_email;
-
-  // 2. Busca no Supabase a capa pelo codigo (assumindo que o nome do produto tem o mesmo codigo)
-  const { data, error } = await supabase
-    .from('preprontas')
-    .select('*')
-    .eq('codigo', nomeProduto)
-    .single();
-
-  if (error || !data) {
-    return { statusCode: 404, body: 'Capa não encontrada.' };
-  }
-
-  // 3. Marca como indisponível
-  await supabase
-    .from('preprontas')
-    .update({ disponivel: false })
-    .eq('codigo', nomeProduto);
-
-  // 4. Envia o e-mail com os arquivos (usando nodemailer + Gmail ou Resend)
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'SEU_EMAIL@gmail.com',
-      pass: 'SUA_SENHA_DE_APP',
-    },
-  });
-
-  const mailOptions = {
-    from: 'Lírio D. Design <lliriodesign@gmail.com>',
-    to: emailCliente,
-    subject: 'Sua capa está pronta! 💖',
-    html: `
-      <h3>Olá!</h3>
-      <p>Obrigado pela sua compra da capa <strong>${data.titulo}</strong>.</p>
-      <p>Aqui estão os arquivos: <a href="${data.link_arquivos}">clique para baixar</a>.</p>
-      <p>Se tiver qualquer dúvida, é só me chamar. 🌷</p>
-      <p>Com carinho,<br>Lírio D. Design</p>
-    `,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    return { statusCode: 200, body: 'Tudo certo! E-mail enviado.' };
+    const payload = JSON.parse(event.body);
+    const nomeProduto = payload.product_name;
+    const emailCliente = payload.customer_email;
+
+    // Buscar a capa pelo código (nome do produto = código)
+    const { data, error } = await supabase
+      .from('preprontas')
+      .select('*')
+      .eq('codigo', nomeProduto)
+      .single();
+
+    if (error || !data) {
+      return { statusCode: 404, body: 'Capa não encontrada.' };
+    }
+
+    // Atualizar status para indisponível
+    await supabase
+      .from('preprontas')
+      .update({ disponivel: false })
+      .eq('codigo', nomeProduto);
+
+    // Enviar e-mail com os arquivos
+    await resend.emails.send({
+      from: 'Lírio D. Design <contato@seusite.com>',
+      to: emailCliente,
+      subject: '🌸 Sua capa está pronta!',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2>Olá!</h2>
+          <p>Obrigado por adquirir a capa <strong>${data.titulo}</strong>.</p>
+          <p>Aqui estão os arquivos da sua capa: <a href="${data.link_arquivos}">Clique aqui para baixar</a>.</p>
+          <p>Se tiver qualquer dúvida, estou à disposição 💌</p>
+          <p>Com carinho,<br><strong>Lírio D. Design</strong></p>
+        </div>
+      `
+    });
+
+    return { statusCode: 200, body: 'Email enviado com sucesso!' };
+
   } catch (err) {
-    return { statusCode: 500, body: 'Erro ao enviar e-mail.' };
+    console.error('Erro:', err);
+    return { statusCode: 500, body: 'Erro ao processar o webhook.' };
   }
 };
