@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 
   export default async (req) => {
     try {
-      const body = JSON.parse(req.body);
+        const body = req.body;
       const { para, assunto, titulo, link } = body;
   
       if (!para || typeof para !== 'string') {
