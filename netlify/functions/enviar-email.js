@@ -12,7 +12,7 @@ export default async (req, res) => {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Lírio Design <contato@liriodesign.shop>',
+        from: 'Lírio Design <noreply@liriodesign.shop>',
       to: [para],
       subject: assunto,
       html: `
