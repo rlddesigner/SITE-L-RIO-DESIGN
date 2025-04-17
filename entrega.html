@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrega da Capa - Lírio Design</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf6;
+      padding: 2rem;
+      color: #444;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
+    }
+    h1 {
+      color: #217c67;
+      text-align: center;
+    }
+    input[type="email"] {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    button {
+      width: 100%;
+      background: #217c67;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1b5f53;
+    }
+    .mensagem {
+      text-align: center;
+      margin-top: 2rem;
+      color: #217c67;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌸 Obrigada pela sua compra!</h1>
+    <p>Insira seu e-mail abaixo e enviaremos os arquivos da capa diretamente para você:</p>
+    <input type="email" id="email" placeholder="Seu e-mail" required />
+    <button onclick="enviarArquivos()">Enviar arquivos</button>
+    <div class="mensagem" id="mensagem"></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabase = createClient(
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'SUA_PUBLIC_KEY_AQUI'
+    );
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigo = urlParams.get("capa");
+
+    async function enviarArquivos() {
+      const email = document.getElementById("email").value;
+      const msg = document.getElementById("mensagem");
+
+      if (!email || !codigo) {
+        msg.textContent = "Por favor, preencha o e-mail corretamente.";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("preprontas")
+        .select("link_arquivos, titulo")
+        .eq("codigo", codigo)
+        .eq("disponivel", true)
+        .single();
+
+      if (error || !data) {
+        msg.textContent = "Capa indisponível ou já entregue.";
+        return;
+      }
+
+      // Enviar o e-mail via Resend (exemplo usando fetch - precisa de backend seguro ou função edge/serverless)
+      await fetch("/api/enviar-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          para: email,
+          assunto: `Sua capa da Lírio Design está pronta!`,
+          titulo: data.titulo,
+          link: data.link_arquivos
+        })
+      });
+
+      await supabase
+        .from("preprontas")
+        .update({ disponivel: false })
+        .eq("codigo", codigo);
+
+      msg.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+    }
+
+    window.enviarArquivos = enviarArquivos;
+  </script>
+</body>
+</html>
