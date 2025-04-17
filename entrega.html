@@ -52,6 +52,7 @@
       font-weight: bold;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/supabase.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -66,7 +67,7 @@
 <script>
   emailjs.init("avKNQkuVniC59Omdz"); // seu Public Key
 
-    const supabase = createClient(
+  const supabase = supabase.createClient(
       'https://tcnonaprqfcpqmscrbkg.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
     );
