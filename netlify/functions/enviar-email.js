@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 
   export default async (req) => {
     try {
-      const { para, assunto, titulo, link } = JSON.parse(req.body);
+      const { para, assunto, titulo, link } = req.body;
   
       const { data, error } = await resend.emails.send({
         from: 'Lírio Design <noreply@liriodesign.shop>',
@@ -23,21 +23,21 @@ import { Resend } from 'resend';
   
       if (error) {
         console.error('Erro ao enviar e-mail:', error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: 'Erro ao enviar e-mail.' }),
-        };
+        return new Response(JSON.stringify({ error: 'Erro ao enviar e-mail' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
   
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ status: 'ok' }),
-      };
+      return new Response(JSON.stringify({ status: 'ok' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
     } catch (err) {
       console.error('Erro geral na função:', err);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: err.message }),
-      };
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
   };
