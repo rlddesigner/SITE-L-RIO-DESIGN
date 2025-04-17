@@ -74,72 +74,70 @@
     emailjs.init("avKNQkuVniC59Omdz");
 
     // Inicializa Supabase
-    const supabase = window.supabase.createClient(
-      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+    const supabase = supabase.createClient(
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
   );
 
   let capa = null;
 
-    async function carregarCapa() {
-      const params = new URLSearchParams(window.location.search);
-      const codigo = params.get("capa");
+  async function carregarCapa() {
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get("capa");
 
-      const { data, error } = await supabase
+    const { data, error } = await supabase
+      .from("preprontas")
+      .select("*")
+      .eq("codigo", codigo)
+      .single();
+
+    if (error || !data) {
+      document.getElementById("mensagem").textContent = "Erro ao carregar a capa.";
+      return;
+    }
+
+    capa = data;
+    console.log("Capa carregada:", capa);
+  }
+
+  async function enviarArquivos() {
+    const emailInput = document.getElementById("email");
+    const mensagem = document.getElementById("mensagem");
+    const email = emailInput.value.trim();
+
+    if (!email || !capa?.codigo || !capa?.link_arquivos) {
+      mensagem.textContent = "Preencha tudo corretamente.";
+      return;
+    }
+
+    try {
+      const result = await emailjs.send("service_vafq5zq", "template_l3x34bo", {
+        email: email,
+        codigo: capa.codigo,
+        link: capa.link_arquivos
+      });
+
+      console.log("Email enviado com sucesso:", result);
+      mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+
+      const { error: updateError } = await supabase
         .from("preprontas")
-        .select("*")
-        .eq("codigo", codigo)
-        .single();
+        .update({ disponivel: false, reservada: false })
+        .eq("codigo", capa.codigo);
 
-      if (error || !data) {
-        document.getElementById("mensagem").textContent = "Erro ao carregar a capa.";
-        console.error("Erro:", error);
-        return;
+      if (updateError) {
+        console.error("Erro ao atualizar status da capa:", updateError);
       }
 
-      capa = data;
-      console.log("Capa carregada:", capa);
+    } catch (error) {
+      console.error("Erro ao enviar:", error);
+      mensagem.textContent = "Erro ao enviar os arquivos.";
     }
+  }
 
-    async function enviarArquivos() {
-      const emailInput = document.getElementById("email");
-      const mensagem = document.getElementById("mensagem");
-      const email = emailInput.value.trim();
-
-      if (!email || !capa?.codigo || !capa?.link_arquivos) {
-        mensagem.textContent = "Preencha todos os campos corretamente.";
-        return;
-      }
-
-      try {
-        const result = await emailjs.send("service_vafq5zq", "template_l3x34bo", {
-          email: email,
-          codigo: capa.codigo,
-          link_arquivos: capa.link_arquivos
-        });
-
-        console.log("Email enviado com sucesso:", result);
-        mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-
-        const { error: updateError } = await supabase
-          .from("preprontas")
-          .update({ disponivel: false, reservada: false })
-          .eq("codigo", capa.codigo);
-
-        if (updateError) {
-          console.error("Erro ao atualizar status:", updateError);
-        }
-
-      } catch (err) {
-        console.error("Erro ao enviar e-mail:", err);
-        mensagem.textContent = "Erro ao enviar o e-mail. Tente novamente.";
-      }
-    }
-
-    window.addEventListener("load", () => {
-      carregarCapa();
-      document.getElementById("botao-enviar").addEventListener("click", enviarArquivos);
-    });
-  </script>
-</body>
-</html>
+  window.addEventListener("load", () => {
+    carregarCapa();
+    document.getElementById("botao-enviar")
+      ?.addEventListener("click", enviarArquivos);
+  });
+</script>
