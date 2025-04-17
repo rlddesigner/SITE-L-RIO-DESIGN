@@ -5,10 +5,11 @@ import { Resend } from 'resend';
   export default async (req) => {
     try {
       const { para, assunto, titulo, link } = req.body;
+      console.log("PARA:", para, typeof para);
   
       const { data, error } = await resend.emails.send({
         from: 'Lírio Design <noreply@liriodesign.shop>',
-        to: [para],
+        to: para,
         subject: assunto,
         html: `
           <h2>🌸 Sua capa está pronta!</h2>
