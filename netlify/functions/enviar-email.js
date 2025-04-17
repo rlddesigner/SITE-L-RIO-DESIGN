@@ -1,4 +1,7 @@
 // netlify/functions/enviar-email.js
+console.log("Requisição recebida:", req.body);
+console.log("Enviando e-mail para:", para);
+
 import { Resend } from 'resend';
 
 export default async (req, res) => {
@@ -25,6 +28,7 @@ export default async (req, res) => {
         <p>Qualquer dúvida é só responder esse e-mail 💖</p>
       `,
     });
+    console.log("Resposta do Resend:", data, error);
 
     if (error) {
       return res.status(500).json({ error });
