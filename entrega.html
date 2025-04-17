@@ -133,25 +133,17 @@
       mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
     } else {
       // 🟢 Agora atualiza a disponibilidade no Supabase
-      const { error } = await supabase
-        .from("preprontas")
-        .update({ disponivel: false, reservada: false })
-        .eq("codigo", capa.codigo);
+      const { data, error: updateError } = await supabase
+  .from("preprontas")
+  .update({ disponivel: false, reservada: false })
+  .eq("codigo", capa.codigo);
 
-      if (error) {
-        console.error("Erro ao atualizar status da capa:", error);
-      } else {
-        console.log("Capa marcada como vendida no Supabase.");
-      }
+if (updateError) {
+  console.error("Erro ao atualizar status da capa:", updateError);
+} else {
+  console.log("Capa marcada como vendida no Supabase:", data);
+}
 
-    } else {
-      mensagem.textContent = "Erro ao enviar o e-mail.";
-    }
-
-  } catch (error) {
-    console.error("Erro ao enviar:", error);
-    mensagem.textContent = "Erro inesperado ao enviar o e-mail.";
-  }
 }
 
 window.addEventListener("load", () => {
