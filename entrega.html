@@ -99,11 +99,11 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          para: email,
-          assunto: `Sua capa da Lírio Design está pronta!`,
-          titulo: data.titulo,
-          link: data.link_arquivos
-        })
+  para: email, // email deve ser uma string, tipo "exemplo@email.com"
+  assunto: 'Sua capa está pronta!',
+  titulo: capa.titulo,
+  link: capa.link_arquivos,
+})
       });
 
       await supabase
