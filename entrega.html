@@ -120,7 +120,7 @@
       console.log("Email enviado com sucesso:", result);
       mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from("preprontas")
         .update({ disponivel: false, reservada: false })
         .eq("codigo", capa.codigo);
