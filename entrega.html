@@ -70,51 +70,63 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
   );
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const codigo = urlParams.get("capa");
+  let capa = null;
 
-    async function enviarArquivos() {
-      const email = document.getElementById("email").value;
-      const msg = document.getElementById("mensagem");
+// Pegar código da capa da URL e buscar no Supabase
+async function carregarCapa() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const codigo = urlParams.get("capa");
 
-      if (!email || !codigo) {
-        msg.textContent = "Por favor, preencha o e-mail corretamente.";
-        return;
-      }
+  const { data, error } = await supabase
+    .from("preprontas")
+    .select("*")
+    .eq("codigo", codigo)
+    .single();
 
-      const { data, error } = await supabase
-        .from("preprontas")
-        .select("link_arquivos, titulo")
-        .eq("codigo", codigo)
-        .eq("disponivel", true)
-        .single();
+  if (error || !data) {
+    console.error("Erro ao buscar capa:", error);
+    return;
+  }
 
-      if (error || !data) {
-        msg.textContent = "Capa indisponível ou já entregue.";
-        return;
-      }
+  capa = data;
+  console.log("Capa carregada:", capa);
+}
 
-      // Enviar o e-mail via Resend (exemplo usando fetch - precisa de backend seguro ou função edge/serverless)
-      await fetch("/.netlify/functions/enviar-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-  para: email, // email deve ser uma string, tipo "exemplo@email.com"
-  assunto: 'Sua capa está pronta!',
-  titulo: capa.titulo,
-  link: capa.link_arquivos,
-})
-      });
+// Função chamada ao clicar no botão "Enviar arquivos"
+async function enviarArquivos() {
+  const email = document.getElementById("email").value;
 
-      await supabase
-        .from("preprontas")
-        .update({ disponivel: false })
-        .eq("codigo", codigo);
+  if (!capa) {
+    alert("Capa não carregada ainda.");
+    return;
+  }
 
-      msg.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-    }
+  const resposta = await fetch("/.netlify/functions/enviar-email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      para: email,
+      assunto: "Sua capa está pronta!",
+      titulo: capa.titulo,
+      link: capa.link_arquivos,
+    }),
+  });
 
-    window.enviarArquivos = enviarArquivos;
-  </script>
-</body>
-</html>
+  const resultado = await resposta.json();
+  console.log("Resultado:", resultado);
+
+  if (resultado.status === "ok") {
+    document.getElementById("mensagem").innerHTML = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+  } else {
+    document.getElementById("mensagem").innerHTML = "Erro ao enviar e-mail.";
+  }
+}
+
+// Executar carregamento da capa ao iniciar a página
+carregarCapa();
+
+// Conectar a função ao botão
+document.getElementById("botao-enviar").addEventListener("click", enviarArquivos);
+</script>
