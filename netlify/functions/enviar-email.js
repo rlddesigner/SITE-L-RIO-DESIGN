@@ -8,7 +8,7 @@ import { Resend } from 'resend';
       console.log("PARA:", para, typeof para);
   
       const { data, error } = await resend.emails.send({
-        from: 'Lírio Design <noreply@liriodesign.shop>',
+        from: 'Lírio Design <onboarding@resend.dev>',
         to: para,
         subject: assunto,
         html: `
