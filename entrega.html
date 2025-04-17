@@ -52,7 +52,6 @@
       font-weight: bold;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/supabase.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -63,16 +62,18 @@
     <p id="mensagem"></p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <script>
   emailjs.init("avKNQkuVniC59Omdz"); // seu Public Key
 
-  const client = supabase.createClient(
-      'https://tcnonaprqfcpqmscrbkg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-    );
+  const client = window.supabase.createClient(
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+  );
 
-    let capa = null;
+  let capa = null;
 
   async function carregarCapa() {
     const params = new URLSearchParams(window.location.search);
@@ -113,7 +114,7 @@
       console.log("Email enviado com sucesso:", result);
       mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
 
-      const { error: updateError } = await supabase
+      const { error: updateError } = await client
         .from("preprontas")
         .update({ disponivel: false, reservada: false })
         .eq("codigo", capa.codigo);
