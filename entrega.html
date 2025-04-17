@@ -72,97 +72,65 @@
 
     let capa = null;
 
-    async function carregarCapa() {
-      const params = new URLSearchParams(window.location.search);
-      const codigo = params.get("capa");
+async function carregarCapa() {
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get("capa");
 
-      const { data, error } = await supabase
-        .from("preprontas")
-        .select("*")
-        .eq("codigo", codigo)
-        .single();
+  const { data, error } = await supabase
+    .from("preprontas")
+    .select("*")
+    .eq("codigo", codigo)
+    .single();
 
-      if (error || !data) {
-        console.error("Erro ao buscar capa:", error);
-        document.getElementById("mensagem").textContent = "Erro ao carregar dados da capa.";
-        return;
-      }
+  if (error || !data) {
+    document.getElementById("mensagem").textContent = "Erro ao carregar a capa.";
+    return;
+  }
 
-      capa = data;
-      console.log("Capa carregada:", capa);
-    }
+  capa = data;
+  console.log("Capa carregada:", capa);
+}
 
-    async function enviarArquivos() {
-      const emailInput = document.getElementById("email");
-      const mensagem = document.getElementById("mensagem");
+async function enviarArquivos() {
+  const emailInput = document.getElementById("email");
+  const mensagem = document.getElementById("mensagem");
+  const email = emailInput.value.trim();
 
-      if (!emailInput || !mensagem) return;
+  if (!email || !capa?.codigo || !capa?.link_arquivos) {
+    mensagem.textContent = "Preencha tudo corretamente.";
+    return;
+  }
 
-      const email = emailInput.value.trim();
-
-      if (!email || typeof email !== 'string') {
-        mensagem.textContent = "Insira um e-mail válido.";
-        return;
-      }
-
-      if (!capa || !capa.titulo || !capa.link_arquivos) {
-        mensagem.textContent = "Erro ao obter informações da capa.";
-        return;
-      }
-
-      console.log("Enviando e-mail para:", email);
-
-      try {
-        console.log("Email que será enviado:", email);
-        const response = await fetch("/.netlify/functions/enviar-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            para: email + "",
-            assunto: "Sua capa está pronta!",
-            titulo: capa.titulo,
-            link: capa.link_arquivos
-          })
-        });
-
-        const result = await response.json();
-        console.log("Resposta do servidor:", result);
-
-        if (result.status === "ok") {
-          mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-
-          // ✅ Atualiza a disponibilidade no Supabase
-          const { data, error: updateError } = await supabase
-            .from("preprontas")
-            .update({ disponivel: false, reservada: false })
-            .eq("codigo", capa.codigo);
-
-          if (updateError) {
-            console.error("Erro ao atualizar status da capa:", updateError);
-          } else {
-            console.log("Capa marcada como vendida no Supabase:", data);
-          }
-
-        } else {
-          mensagem.textContent = "Erro ao enviar o e-mail.";
-        }
-
-      } catch (error) {
-        console.error("Erro ao enviar:", error);
-        mensagem.textContent = "Erro inesperado ao enviar o e-mail.";
-      }
-    }
-
-    window.addEventListener("load", () => {
-      carregarCapa();
-
-      const botao = document.getElementById("botao-enviar");
-      if (botao) {
-        botao.addEventListener("click", enviarArquivos);
-      }
+  try {
+    const result = await emailjs.send("service_vafq5zq", "template_l3x34bo", {
+      email: email,
+      codigo: capa.codigo,
+      link_arquivos: capa.link_arquivos
     });
-  </script>
+
+    console.log("Email enviado com sucesso:", result);
+    mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+
+    const { error: updateError } = await supabase
+      .from("preprontas")
+      .update({ disponivel: false, reservada: false })
+      .eq("codigo", capa.codigo);
+
+    if (updateError) {
+      console.error("Erro ao atualizar status da capa:", updateError);
+    }
+
+  } catch (error) {
+    console.error("Erro ao enviar:", error);
+    mensagem.textContent = "Erro ao enviar os arquivos.";
+  }
+}
+
+window.addEventListener("load", () => {
+  carregarCapa();
+  const botao = document.getElementById("botao-enviar");
+  botao?.addEventListener("click", enviarArquivos);
+});
+</script>
 </body>
 </html>
