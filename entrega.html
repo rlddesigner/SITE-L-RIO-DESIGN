@@ -93,50 +93,53 @@
     }
 
     async function enviarArquivos() {
-      const email = document.getElementById("email").value;
+  const emailInput = document.getElementById("email");
+  const mensagem = document.getElementById("mensagem");
 
-      if (!capa) {
-    alert("A capa ainda não foi carregada.");
+  if (!emailInput || !mensagem) return;
+
+  const email = emailInput.value.trim();
+
+  if (!email || typeof email !== 'string') {
+    mensagem.textContent = "Insira um e-mail válido.";
     return;
   }
 
-  if (!email || !email.includes('@')) {
-    alert("Por favor, insira um e-mail válido.");
+  if (!capa || !capa.titulo || !capa.link_arquivos) {
+    mensagem.textContent = "Erro ao obter informações da capa.";
     return;
   }
 
-  console.log("Enviando e-mail para:", email); // Para debug
+  console.log("Enviando e-mail para:", email);
 
-  const response = await fetch('/.netlify/functions/enviar-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      para: email,
-      assunto: 'Sua capa está pronta!',
-      titulo: capa?.titulo ?? 'Capa',
-      link: capa?.link_arquivos ?? ''
-    })
-  });
+  try {
+    const response = await fetch("/.netlify/functions/enviar-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        para: String(email),
+        assunto: "Sua capa está pronta!",
+        titulo: capa.titulo,
+        link: capa.link_arquivos
+      })
+    });
 
-  const data = await response.json();
-  console.log('Resposta do servidor:', data);
+    const result = await response.json();
+    console.log("Resposta do servidor:", result);
 
-  if (data.status === 'ok') {
-    document.getElementById("mensagem").textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-  } else {
-    document.getElementById("mensagem").textContent = "Erro ao enviar o e-mail.";
-  }
+    if (result.status === "ok") {
+      mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+    } else {
+      mensagem.textContent = "Erro ao enviar o e-mail.";
     }
 
-    window.addEventListener('load', () => {
-      carregarCapa();
-      const botao = document.getElementById("botao-enviar");
-      if (botao) {
-        botao.addEventListener("click", enviarArquivos);
-      }
-    });
+  } catch (error) {
+    console.error("Erro ao enviar:", error);
+    mensagem.textContent = "Erro inesperado ao enviar o e-mail.";
+  }
+}
   </script>
 </body>
 </html>
