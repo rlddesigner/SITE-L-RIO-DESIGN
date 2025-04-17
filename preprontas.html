@@ -92,28 +92,38 @@
       let statusTexto = "";
       let botoes = "";
 
-      if (!capa.disponivel) {
-        statusTexto = `<p class="status indisponivel">❌ Indisponível</p>`;
-      } else if (capa.reservada && expiraEm && expiraEm > agora) {
-        statusTexto = `
-  <div class="status reservada">
-    <p>⏳ Reservada temporariamente</p>
-    <small class="expira-msg">Caso o cliente não finalize a compra, ela voltará a ficar disponível em alguns minutos.</small>
-  </div>
-`;
-      } else {
-        statusTexto = `<p class="status disponivel">✔️ Disponível</p>`;
-        botoes = `
-          <div class="botoes-opcoes">
-            <a href="#" onclick="reservarCapa('${capa.codigo}', '${capa.link_pagamento_rapido}')" class="btn-automatica">
-  R$ 25,00<br><small>Envio automático</small>
-</a>
-            <a href="#" onclick="reservarCapa('${capa.codigo}', 'formulario.html?codigo=${capa.codigo}')" class="btn-modificada">
-  R$ 45,00<br><small>Receba com modificação</small>
-</a>
+      if (!capa.disponivel && !capa.reservada && capa.link_arquivos) {
+  // CAPA FOI VENDIDA
+  statusTexto = `<p class="status vendida">💖 Vendida</p>`;
+  botoes = ""; // remove botões
+} else if (capa.reservada && expiraEm && expiraEm > agora) {
+  // RESERVADA TEMPORARIAMENTE
+  statusTexto = `
+    <div class="status reservada">
+      <p>⏳ Reservada temporariamente</p>
+      <small class="expira-msg">Caso o cliente não finalize a compra, ela voltará a ficar disponível em alguns minutos.</small>
+    </div>
+  `;
+  botoes = "";
+} else if (capa.disponivel) {
+  // DISPONÍVEL
+  statusTexto = `<p class="status disponivel">✔️ Disponível</p>`;
+  botoes = `
+    <div class="botoes-opcoes">
+      <a href="#" onclick="reservarCapa('${capa.codigo}', '${capa.link_pagamento_rapido}')" class="btn-automatica">
+        R$ 25,00<br><small>Envio automático</small>
+      </a>
+      <a href="#" onclick="reservarCapa('${capa.codigo}', 'formulario.html?codigo=${capa.codigo}')" class="btn-modificada">
+        R$ 45,00<br><small>Receba com modificação</small>
+      </a>
+    </div>
+  `;
+} else {
+  // Caso especial ou fallback
+  statusTexto = `<p class="status indisponivel">❌ Indisponível</p>`;
+  botoes = "";
+}
 
-          </div>`;
-      }
 
       lista.innerHTML += `
         <div class="capa-item">
