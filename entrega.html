@@ -74,7 +74,7 @@
     emailjs.init("avKNQkuVniC59Omdz");
 
     // Inicializa Supabase
-    const supabase = supabase.createClient(
+    const client = supabase.createClient(
     'https://tcnonaprqfcpqmscrbkg.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
   );
@@ -85,7 +85,7 @@
     const params = new URLSearchParams(window.location.search);
     const codigo = params.get("capa");
 
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("preprontas")
       .select("*")
       .eq("codigo", codigo)
