@@ -93,68 +93,75 @@
     }
 
     async function enviarArquivos() {
-  const emailInput = document.getElementById("email");
-  const mensagem = document.getElementById("mensagem");
+      const emailInput = document.getElementById("email");
+      const mensagem = document.getElementById("mensagem");
 
-  if (!emailInput || !mensagem) return;
+      if (!emailInput || !mensagem) return;
 
-  const email = emailInput.value.trim();
+      const email = emailInput.value.trim();
 
-  if (!email || typeof email !== 'string') {
-    mensagem.textContent = "Insira um e-mail válido.";
-    return;
-  }
+      if (!email || typeof email !== 'string') {
+        mensagem.textContent = "Insira um e-mail válido.";
+        return;
+      }
 
-  if (!capa || !capa.titulo || !capa.link_arquivos) {
-    mensagem.textContent = "Erro ao obter informações da capa.";
-    return;
-  }
+      if (!capa || !capa.titulo || !capa.link_arquivos) {
+        mensagem.textContent = "Erro ao obter informações da capa.";
+        return;
+      }
 
-  console.log("Enviando e-mail para:", email);
+      console.log("Enviando e-mail para:", email);
 
-  try {
-    const response = await fetch("/.netlify/functions/enviar-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        para: String(email),
-        assunto: "Sua capa está pronta!",
-        titulo: capa.titulo,
-        link: capa.link_arquivos
-      })
+      try {
+        const response = await fetch("/.netlify/functions/enviar-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            para: String(email),
+            assunto: "Sua capa está pronta!",
+            titulo: capa.titulo,
+            link: capa.link_arquivos
+          })
+        });
+
+        const result = await response.json();
+        console.log("Resposta do servidor:", result);
+
+        if (result.status === "ok") {
+          mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+
+          // ✅ Atualiza a disponibilidade no Supabase
+          const { data, error: updateError } = await supabase
+            .from("preprontas")
+            .update({ disponivel: false, reservada: false })
+            .eq("codigo", capa.codigo);
+
+          if (updateError) {
+            console.error("Erro ao atualizar status da capa:", updateError);
+          } else {
+            console.log("Capa marcada como vendida no Supabase:", data);
+          }
+
+        } else {
+          mensagem.textContent = "Erro ao enviar o e-mail.";
+        }
+
+      } catch (error) {
+        console.error("Erro ao enviar:", error);
+        mensagem.textContent = "Erro inesperado ao enviar o e-mail.";
+      }
+    }
+
+    window.addEventListener("load", () => {
+      carregarCapa();
+
+      const botao = document.getElementById("botao-enviar");
+      if (botao) {
+        botao.addEventListener("click", enviarArquivos);
+      }
     });
-
-    const result = await response.json();
-    console.log("Resposta do servidor:", result);
-
-    if (result.status === "ok") {
-      mensagem.textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-    } else {
-      // 🟢 Agora atualiza a disponibilidade no Supabase
-      const { data, error: updateError } = await supabase
-  .from("preprontas")
-  .update({ disponivel: false, reservada: false })
-  .eq("codigo", capa.codigo);
-
-if (updateError) {
-  console.error("Erro ao atualizar status da capa:", updateError);
-} else {
-  console.log("Capa marcada como vendida no Supabase:", data);
-}
-
-}
-
-window.addEventListener("load", () => {
-  carregarCapa();
-
-  const botao = document.getElementById("botao-enviar");
-  if (botao) {
-    botao.addEventListener("click", enviarArquivos);
-  }
-});
-
   </script>
 </body>
 </html>
