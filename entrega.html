@@ -114,7 +114,7 @@
 
       try {
         console.log("Email que será enviado:", email);
-        const response = await fetch("/.netlify/functions/enviar-email", {
+        const response = await fetch("/netlify/functions/enviar-email.js", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
