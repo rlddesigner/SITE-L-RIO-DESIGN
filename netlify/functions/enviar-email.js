@@ -1,18 +1,4 @@
-fetch('/.netlify/functions/enviar-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      para: email,
-      assunto: 'Sua capa está pronta!',
-      titulo: capa.titulo,
-      link: capa.link_arquivos,
-    }),
-  })
-  // netlify/functions/enviar-email.js
-console.log("Requisição recebida:", req.body);
-console.log("Enviando e-mail para:", para);
+// netlify/functions/enviar-email.js
 
 import { Resend } from 'resend';
 
@@ -23,11 +9,14 @@ export default async (req, res) => {
 
   const { para, assunto, titulo, link } = req.body;
 
-  const resend = new Resend('re_HjBxcq9T_MZ9GhyWBuRyWG8VBaU9J3zmq');
+  console.log("Requisição recebida:", req.body);
+  console.log("Enviando e-mail para:", para);
+
+  const resend = new Resend('re_HjBxcq9T_MZ9GhyWBuRyWG8VBaU9J3zmq'); // sua API KEY
 
   try {
     const { data, error } = await resend.emails.send({
-        from: 'Lírio Design <noreply@liriodesign.shop>',
+      from: 'Lírio Design <noreply@liriodesign.shop>', // remetente com seu domínio verificado
       to: [para],
       subject: assunto,
       html: `
@@ -40,6 +29,7 @@ export default async (req, res) => {
         <p>Qualquer dúvida é só responder esse e-mail 💖</p>
       `,
     });
+
     console.log("Resposta do Resend:", data, error);
 
     if (error) {
@@ -48,6 +38,7 @@ export default async (req, res) => {
 
     return res.status(200).json({ status: 'ok' });
   } catch (err) {
+    console.error("Erro ao enviar e-mail:", err);
     return res.status(500).json({ error: err.message });
   }
 };
