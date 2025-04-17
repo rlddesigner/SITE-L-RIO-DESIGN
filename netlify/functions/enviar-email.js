@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-  const resend = new Resend('re_AHvj6A2S_5hjU4UZbnFTdmfoStmFn7c1i'); // sua API KEY
+  const resend = new Resend('re_f3ZwS2km_LnHophLdz7iCa4rg8FsqDNCD'); // sua API KEY
 
   export default async (req) => {
     try {
@@ -19,7 +19,7 @@ import { Resend } from 'resend';
       }
   
       const { error } = await resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: 'Lírio Design <contato@email.liriodesign.shop>',
         to: para,
         subject: assunto || 'Sua capa está pronta!',
         html: `
