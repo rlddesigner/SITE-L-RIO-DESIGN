@@ -71,7 +71,6 @@
     const { data, error } = await client
   .from('preprontas')
   .select('*')
-  .eq('disponivel', true)
   .eq('status_publicacao', 'publicado')
   .order('data_cadastro', { ascending: false });
 
