@@ -96,36 +96,38 @@
       const email = document.getElementById("email").value;
 
       if (!capa) {
-        alert("A capa ainda não foi carregada.");
-        return;
-      }
+    alert("A capa ainda não foi carregada.");
+    return;
+  }
 
-      try {
-        const response = await fetch('/.netlify/functions/enviar-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            para: email,
-            assunto: 'Sua capa está pronta!',
-            titulo: capa?.titulo ?? 'Capa',
-            link: capa?.link_arquivos ?? ''
-          })
-        });
+  if (!email || !email.includes('@')) {
+    alert("Por favor, insira um e-mail válido.");
+    return;
+  }
 
-        const data = await response.json();
-        console.log('Resposta do servidor:', data);
+  console.log("Enviando e-mail para:", email); // Para debug
 
-        if (data.status === 'ok') {
-          document.getElementById("mensagem").textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-        } else {
-          document.getElementById("mensagem").textContent = "Erro ao enviar o e-mail.";
-        }
-      } catch (err) {
-        console.error('Erro na requisição:', err);
-        document.getElementById("mensagem").textContent = "Erro ao enviar e-mail.";
-      }
+  const response = await fetch('/.netlify/functions/enviar-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      para: email,
+      assunto: 'Sua capa está pronta!',
+      titulo: capa?.titulo ?? 'Capa',
+      link: capa?.link_arquivos ?? ''
+    })
+  });
+
+  const data = await response.json();
+  console.log('Resposta do servidor:', data);
+
+  if (data.status === 'ok') {
+    document.getElementById("mensagem").textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+  } else {
+    document.getElementById("mensagem").textContent = "Erro ao enviar o e-mail.";
+  }
     }
 
     window.addEventListener('load', () => {
