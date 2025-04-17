@@ -4,13 +4,20 @@ import { Resend } from 'resend';
 
   export default async (req) => {
     try {
-      const { para, assunto, titulo, link } = req.body;
-      console.log("PARA:", para, typeof para);
+      const body = JSON.parse(req.body);
+      const { para, assunto, titulo, link } = body;
   
-      const { data, error } = await resend.emails.send({
+      if (!para || typeof para !== 'string') {
+        return new Response(JSON.stringify({ error: "'para' é obrigatório e deve ser uma string" }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+  
+      const { error } = await resend.emails.send({
         from: 'Lírio Design <noreply@liriodesign.shop>',
         to: para,
-        subject: assunto,
+        subject: assunto || 'Sua capa está pronta!',
         html: `
           <h2>🌸 Sua capa está pronta!</h2>
           <p>Olá! Obrigada por confiar na Lírio Design.</p>
@@ -23,22 +30,23 @@ import { Resend } from 'resend';
       });
   
       if (error) {
-        console.error('Erro ao enviar e-mail:', error);
-        return new Response(JSON.stringify({ error: 'Erro ao enviar e-mail' }), {
+        console.error("Erro ao enviar e-mail:", error);
+        return new Response(JSON.stringify({ error: 'Erro ao enviar e-mail', details: error }), {
           status: 500,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' }
         });
       }
   
       return new Response(JSON.stringify({ status: 'ok' }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' }
       });
+  
     } catch (err) {
-      console.error('Erro geral na função:', err);
-      return new Response(JSON.stringify({ error: err.message }), {
+      console.error("Erro geral na função:", err);
+      return new Response(JSON.stringify({ error: 'Erro no servidor', details: err.message }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' }
       });
     }
   };

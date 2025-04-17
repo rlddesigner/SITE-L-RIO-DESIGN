@@ -1,127 +1,73 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entrega da Capa - Lírio Design</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fffaf6;
-      padding: 2rem;
-      color: #444;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(255, 179, 129, 0.1);
-    }
-    h1 {
-      color: #217c67;
-      text-align: center;
-    }
-    input[type="email"] {
-      width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-top: 1rem;
-    }
-    button {
-      width: 100%;
-      background: #217c67;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 1rem;
-      font-size: 1rem;
-      margin-top: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #1b5f53;
-    }
-    .mensagem {
-      text-align: center;
-      margin-top: 2rem;
-      color: #217c67;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🌸 Obrigada pela sua compra!</h1>
-    <p>Insira seu e-mail abaixo e enviaremos os arquivos da capa diretamente para você:</p>
-    <input id="email" type="email" placeholder="Seu e-mail" />
-<button id="botao-enviar">Enviar arquivos</button>
-<p id="mensagem"></p>
-
 <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
+  
     const supabase = createClient(
-    'https://tcnonaprqfcpqmscrbkg.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-  );
-
-  let capa = null;
-
-  async function carregarCapa() {
-    const params = new URLSearchParams(window.location.search);
-    const codigo = params.get("capa");
-
-    const { data, error } = await supabase
-      .from("preprontas")
-      .select("*")
-      .eq("codigo", codigo)
-      .single();
-
-    if (error || !data) {
-      console.error("Erro ao buscar capa:", error);
-      document.getElementById("mensagem").textContent = "Erro ao carregar dados da capa.";
-      return;
+      'https://tcnonaprqfcpqmscrbkg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
+    );
+  
+    let capa = null;
+  
+    async function carregarCapa() {
+      const params = new URLSearchParams(window.location.search);
+      const codigo = params.get("capa");
+  
+      const { data, error } = await supabase
+        .from("preprontas")
+        .select("*")
+        .eq("codigo", codigo)
+        .single();
+  
+      if (error || !data) {
+        console.error("Erro ao buscar capa:", error);
+        document.getElementById("mensagem").textContent = "Erro ao carregar dados da capa.";
+        return;
+      }
+  
+      capa = data;
+      console.log("Capa carregada:", capa);
     }
-
-    capa = data;
-    console.log("Capa carregada:", capa);
-  }
-
-  async function enviarArquivos() {
-    const email = document.getElementById("email").value;
-
-    if (!capa) {
-      alert("A capa ainda não foi carregada.");
-      return;
+  
+    async function enviarArquivos() {
+      const email = document.getElementById("email").value;
+  
+      if (!capa) {
+        alert("A capa ainda não foi carregada.");
+        return;
+      }
+  
+      try {
+        const response = await fetch('/.netlify/functions/enviar-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            para: email,
+            assunto: 'Sua capa está pronta!',
+            titulo: capa?.titulo ?? 'Capa',
+            link: capa?.link_arquivos ?? ''
+          })
+        });
+  
+        const data = await response.json();
+        console.log('Resposta do servidor:', data);
+  
+        if (data.status === 'ok') {
+          document.getElementById("mensagem").textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+        } else {
+          document.getElementById("mensagem").textContent = "Erro ao enviar e-mail. Tente novamente.";
+        }
+      } catch (err) {
+        console.error('Erro na requisição:', err);
+        document.getElementById("mensagem").textContent = "Erro ao enviar e-mail.";
+      }
     }
-
-    const response = await fetch("/.netlify/functions/enviar-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        para: email,
-        assunto: "Sua capa está pronta!",
-        titulo: capa.titulo,
-        link: capa.link_arquivos,
-      }),
-    });
-
-    const result = await response.json();
-    if (result.status === "ok") {
-      document.getElementById("mensagem").textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-    } else {
-      document.getElementById("mensagem").textContent = "Erro ao enviar o e-mail.";
-      console.error("Erro no envio:", result);
-    }
-  }
-
-  // ⚠️ Esperar o DOM carregar para garantir que elementos existem
-  document.addEventListener("DOMContentLoaded", () => {
-    carregarCapa();
+  
+    // 👇 Conecta o botão com a função
     document.getElementById("botao-enviar").addEventListener("click", enviarArquivos);
-  });
-</script>
+  
+    // 👇 Carrega os dados da capa ao abrir a página
+    carregarCapa();
+  </script>
+  
