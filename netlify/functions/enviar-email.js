@@ -4,14 +4,18 @@ import { Resend } from 'resend';
 
   export default async (req) => {
     try {
-        const body = req.body;
+      const bodyText = await req.text(); // <- ler o corpo cru
+      const body = JSON.parse(bodyText); // <- converter em JSON
+  
       const { para, assunto, titulo, link } = body;
   
+      console.log("📨 Campo 'para' recebido:", para);
+  
       if (!para || typeof para !== 'string') {
-        return new Response(JSON.stringify({ error: "'para' é obrigatório e deve ser uma string" }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({ error: "'para' é obrigatório e deve ser uma string" }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
       }
   
       const { error } = await resend.emails.send({
@@ -31,10 +35,10 @@ import { Resend } from 'resend';
   
       if (error) {
         console.error("Erro ao enviar e-mail:", error);
-        return new Response(JSON.stringify({ error: 'Erro ao enviar e-mail', details: error }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({ error: 'Erro ao enviar e-mail', details: error }),
+          { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
       }
   
       return new Response(JSON.stringify({ status: 'ok' }), {
