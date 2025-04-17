@@ -57,12 +57,11 @@
   <div class="container">
     <h1>🌸 Obrigada pela sua compra!</h1>
     <p>Insira seu e-mail abaixo e enviaremos os arquivos da capa diretamente para você:</p>
-    <input type="email" id="email" placeholder="Seu e-mail" required />
-    <button onclick="enviarArquivos()">Enviar arquivos</button>
-    <div class="mensagem" id="mensagem"></div>
-  </div>
+    <input id="email" type="email" placeholder="Seu e-mail" />
+<button id="botao-enviar">Enviar arquivos</button>
+<p id="mensagem"></p>
 
-  <script type="module">
+<script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabase = createClient(
@@ -72,61 +71,57 @@
 
   let capa = null;
 
-// Pegar código da capa da URL e buscar no Supabase
-async function carregarCapa() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const codigo = urlParams.get("capa");
+  async function carregarCapa() {
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get("capa");
 
-  const { data, error } = await supabase
-    .from("preprontas")
-    .select("*")
-    .eq("codigo", codigo)
-    .single();
+    const { data, error } = await supabase
+      .from("preprontas")
+      .select("*")
+      .eq("codigo", codigo)
+      .single();
 
-  if (error || !data) {
-    console.error("Erro ao buscar capa:", error);
-    return;
+    if (error || !data) {
+      console.error("Erro ao buscar capa:", error);
+      document.getElementById("mensagem").textContent = "Erro ao carregar dados da capa.";
+      return;
+    }
+
+    capa = data;
+    console.log("Capa carregada:", capa);
   }
 
-  capa = data;
-  console.log("Capa carregada:", capa);
-}
+  async function enviarArquivos() {
+    const email = document.getElementById("email").value;
 
-// Função chamada ao clicar no botão "Enviar arquivos"
-async function enviarArquivos() {
-  const email = document.getElementById("email").value;
+    if (!capa) {
+      alert("A capa ainda não foi carregada.");
+      return;
+    }
 
-  if (!capa) {
-    alert("Capa não carregada ainda.");
-    return;
+    const response = await fetch("/.netlify/functions/enviar-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        para: email,
+        assunto: "Sua capa está pronta!",
+        titulo: capa.titulo,
+        link: capa.link_arquivos,
+      }),
+    });
+
+    const result = await response.json();
+    if (result.status === "ok") {
+      document.getElementById("mensagem").textContent = "Arquivos enviados com sucesso! Verifique seu e-mail.";
+    } else {
+      document.getElementById("mensagem").textContent = "Erro ao enviar o e-mail.";
+      console.error("Erro no envio:", result);
+    }
   }
 
-  const resposta = await fetch("/.netlify/functions/enviar-email", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      para: email,
-      assunto: "Sua capa está pronta!",
-      titulo: capa.titulo,
-      link: capa.link_arquivos,
-    }),
+  // ⚠️ Esperar o DOM carregar para garantir que elementos existem
+  document.addEventListener("DOMContentLoaded", () => {
+    carregarCapa();
+    document.getElementById("botao-enviar").addEventListener("click", enviarArquivos);
   });
-
-  const resultado = await resposta.json();
-  console.log("Resultado:", resultado);
-
-  if (resultado.status === "ok") {
-    document.getElementById("mensagem").innerHTML = "Arquivos enviados com sucesso! Verifique seu e-mail.";
-  } else {
-    document.getElementById("mensagem").innerHTML = "Erro ao enviar e-mail.";
-  }
-}
-
-// Executar carregamento da capa ao iniciar a página
-carregarCapa();
-
-// Conectar a função ao botão
-document.getElementById("botao-enviar").addEventListener("click", enviarArquivos);
 </script>
