@@ -1,4 +1,16 @@
-// netlify/functions/enviar-email.js
+fetch('/.netlify/functions/enviar-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      para: email,
+      assunto: 'Sua capa está pronta!',
+      titulo: capa.titulo,
+      link: capa.link_arquivos,
+    }),
+  })
+  // netlify/functions/enviar-email.js
 console.log("Requisição recebida:", req.body);
 console.log("Enviando e-mail para:", para);
 
