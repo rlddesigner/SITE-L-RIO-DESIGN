@@ -18,14 +18,18 @@ exports.handler = async (event) => {
   const email = eventBody?.resource?.customer?.data?.email;
   const skuOriginal = eventBody?.resource?.items?.data?.[0]?.sku?.data?.sku || '';
   const nomeProduto = eventBody?.resource?.items?.data?.[0]?.product?.data?.name;
-  
-  // Limpeza e padronização
+
+  // Normalização do SKU
   const skuLimpo = skuOriginal.trim().toUpperCase().replace(/\s+/g, '');
   const codigo = skuLimpo.replace(/-(AUTO|MANUAL)$/i, '');
   const isEntregaAutomatica = skuLimpo.endsWith('-AUTO');
-  
+
+  console.log("📦 SKU original:", skuOriginal);
+  console.log("🔍 Código tratado:", codigo);
+  console.log("⚙️ Tipo de entrega:", isEntregaAutomatica ? "Automática" : "Manual");
 
   if (!email || !codigo) {
+    console.error("❌ Email ou código ausente.");
     return {
       statusCode: 400,
       body: 'Email ou código ausente.'
@@ -40,10 +44,12 @@ exports.handler = async (event) => {
       .single();
 
     if (error || !capa) {
+      console.error("❌ Capa não encontrada ou erro:", error);
       return { statusCode: 404, body: 'Capa não encontrada.' };
     }
 
     if (isEntregaAutomatica) {
+      console.log("📧 Enviando e-mail para:", email);
       await resend.emails.send({
         from: 'Lírio D. Design <vendas@lliriodesign.shop>',
         to: [email],
@@ -76,14 +82,21 @@ exports.handler = async (event) => {
       });
     }
 
-    const { error: updateError } = await supabase
+    const { error: updateError, data: updateResult } = await supabase
       .from('preprontas')
       .update({ disponivel: false, reservada: false })
-      .eq('codigo', codigo);
+      .eq('codigo', codigo)
+      .select(); // para verificar se algo foi alterado
 
     if (updateError) {
-      console.error("Erro ao atualizar status:", updateError);
+      console.error("❌ Erro ao atualizar status da capa:", updateError);
       return { statusCode: 500, body: 'Erro ao atualizar status da capa.' };
+    }
+
+    if (updateResult.length === 0) {
+      console.warn("⚠️ Nenhuma linha foi atualizada. Verifique se o código existe exatamente.");
+    } else {
+      console.log("✅ Capa atualizada com sucesso:", updateResult);
     }
 
     return {
@@ -94,7 +107,7 @@ exports.handler = async (event) => {
     };
 
   } catch (err) {
-    console.error("Erro ao processar:", err);
+    console.error("❌ Erro ao processar:", err);
     return {
       statusCode: 500,
       body: 'Erro ao processar a solicitação.',
