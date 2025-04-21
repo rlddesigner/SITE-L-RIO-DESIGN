@@ -77,6 +77,15 @@ const supabase = createClient(
           </table>
         `
       });
+
+      // SKU original vindo da Yampi (com sufixo)
+const skuOriginal = eventBody?.resource?.items?.data?.[0]?.sku?.data?.sku;
+
+// Remove sufixos tipo -AUTO ou -MANUAL
+const codigo = skuOriginal?.split('-')[0] + '-' + skuOriginal?.split('-')[1];  // Ex: CAPA-457
+
+const nomeProduto = eventBody?.resource?.items?.data?.[0]?.product?.data?.name;
+const isEntregaAutomatica = nomeProduto?.toLowerCase().includes("automática");
   
       await supabase
         .from('preprontas')
