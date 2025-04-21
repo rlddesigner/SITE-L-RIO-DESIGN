@@ -8,11 +8,20 @@
     "test": "echo 'Sem testes definidos'"
   },
   "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
     "@supabase/supabase-js": "^2.39.6",
-    "resend": "^4.3.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "resend": "^4.3.0"
   },
   "keywords": [],
   "author": "Lírio Design",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlddesigner/SITE-L-RIO-DESIGN.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rlddesigner/SITE-L-RIO-DESIGN/issues"
+  },
+  "homepage": "https://github.com/rlddesigner/SITE-L-RIO-DESIGN#readme"
 }
