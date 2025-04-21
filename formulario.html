@@ -261,11 +261,11 @@ document.getElementById("tipoAlteracao").addEventListener("change", function () 
     } else {
       alert('Formulário enviado com sucesso! Agora você será redirecionado para a página de pagamento.');
       // 5. Redirecionar para pagamento
-      if (tipoAlteracao === 'imagem') {
-        window.location.href = 'pagamento-com-imagem.html'; // ajuste conforme sua página
-      } else {
-        window.location.href = 'https://lirio-design.pay.yampi.com.br/r/LYYE41874T'; // ajuste conforme sua página
-      }
+      if (tipoAlteracao && tipoAlteracao === 'imagem') {
+  window.location.href = 'pagamento-com-imagem.html';
+} else {
+  window.location.href = 'https://lirio-design.pay.yampi.com.br/r/LYYE41874T';
+}
     }
   });
 </script>
