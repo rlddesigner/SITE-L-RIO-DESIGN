@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,6 +11,7 @@
       padding: 30px;
       color: #444;
     }
+
     .form-container {
       max-width: 700px;
       margin: auto;
@@ -20,21 +20,25 @@
       padding: 40px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+
     h2 {
       text-align: center;
       color: #d34c66;
       margin-bottom: 10px;
     }
+
     p.explicacao {
       text-align: center;
       font-size: 1rem;
       margin-bottom: 30px;
     }
+
     label {
       display: block;
       margin-top: 20px;
       font-weight: bold;
     }
+
     input, select, textarea {
       width: 100%;
       padding: 10px;
@@ -42,13 +46,25 @@
       border: 1px solid #ccc;
       border-radius: 8px;
     }
+
     textarea {
       resize: vertical;
       min-height: 80px;
     }
+
     .oculto {
       display: none;
     }
+
+    .alerta {
+      background: #ffe3e3;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-top: 10px;
+      color: #b00020;
+    }
+
     button {
       margin-top: 30px;
       background-color: #f27c46;
@@ -61,6 +77,7 @@
       cursor: pointer;
       font-size: 1rem;
     }
+
     button:hover {
       background-color: #da743c;
     }
@@ -73,8 +90,9 @@
     <p class="explicacao">Preencha os dados abaixo para que possamos personalizar sua capa exatamente como você deseja.</p>
 
     <form>
-      <label for="email">Seu e-mail:</label>
-      <input type="email" id="email" required placeholder="exemplo@email.com" />
+
+        <label for="email">Seu e-mail:</label>
+<input type="email" id="email" required placeholder="exemplo@email.com" />
 
       <label for="codigo">Código da Capa:</label>
       <input type="text" id="codigo" readonly value="" />
@@ -102,18 +120,26 @@
         <input type="url" id="linkReferencia" placeholder="Cole aqui o link (Drive, Pinterest...)" />
       </div>
 
-      <label for="tipoAlteracao">Deseja modificar algo?</label>
-      <select id="tipoAlteracao">
-        <option value="">Selecione</option>
-        <option value="cor">Alterar cor da capa</option>
-        <option value="imagem">Alterar imagem da capa</option>
-      </select>
+      <label for="alteracoesExtras">Deseja alterar algo mais na capa?</label>
+<select id="alteracoesExtras">
+  <option value="nao">Não</option>
+  <option value="sim">Sim</option>
+</select>
 
-      <div id="descricaoImagem" style="display: none; margin-top: 10px;">
-        <label for="descricao-imagem">Descreva a alteração na imagem ou envie um link (ex: Drive):</label>
-        <textarea id="descricao-imagem" rows="3"></textarea>
-        <p style="color: #d34c66; font-size: 0.9rem;"><strong>⚠️ Essa alteração adiciona R$10 ao valor final.</strong></p>
-      </div>
+<div id="opcoesExtras" style="display: none; margin-top: 15px;">
+  <label for="tipoAlteracao">Escolha o que deseja modificar:</label>
+  <select id="tipoAlteracao">
+    <option value="">Selecione</option>
+    <option value="cor">Alterar cor da capa</option>
+    <option value="imagem">Alterar imagem da capa</option>
+  </select>
+
+  <div id="descricaoImagem" style="display: none; margin-top: 10px;">
+    <label for="descricao-imagem">Descreva a alteração na imagem ou envie um link (ex: Drive):</label>
+    <textarea id="descricao-imagem" rows="3"></textarea>
+    <p style="color: #d34c66; font-size: 0.9rem;"><strong>⚠️ Essa alteração adiciona R$10 ao valor final.</strong></p>
+  </div>
+</div>
 
       <label for="subtitulo">Subtítulo (opcional):</label>
       <input type="text" id="subtitulo" />
@@ -128,77 +154,122 @@
     </form>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const codigoCapa = urlParams.get('codigo');
+    // Pega o parâmetro da URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const codigoCapa = urlParams.get('codigo');
 
-    if (codigoCapa) {
-      document.addEventListener("DOMContentLoaded", () => {
-        const inputCodigo = document.getElementById("codigo");
-        if (inputCodigo) inputCodigo.value = codigoCapa;
-      });
-    }
-
+  // Preenche o campo do código da capa
+  if (codigoCapa) {
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputCodigo = document.getElementById("codigo");
+      if (inputCodigo) inputCodigo.value = codigoCapa;
+    });
+  }
     function mostrarFonte() {
       const campo = document.getElementById('alterarFonte').value;
       document.getElementById('opcaoFonte').classList.toggle('oculto', campo !== 'sim');
     }
 
-    document.getElementById("tipoAlteracao").addEventListener("change", function () {
-      const mostrarDescricao = this.value === "imagem";
-      document.getElementById("descricaoImagem").style.display = mostrarDescricao ? "block" : "none";
-    });
+    function mostrarDesign() {
+      const campo = document.getElementById('alterarDesign').value;
+      const designDiv = document.getElementById('opcaoDesign');
+      designDiv.classList.toggle('oculto', campo !== 'sim');
+      document.getElementById('campoCor').classList.add('oculto');
+      document.getElementById('campoImagem').classList.add('oculto');
+    }
 
-    const client = supabase.createClient(
-      'https://tcnonaprqfcpqmscrbkg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
-    );
+    function verificaExtras() {
+      const extras = Array.from(document.getElementById('opcoesExtras').selectedOptions).map(opt => opt.value);
+      document.getElementById('campoCor').classList.toggle('oculto', !extras.includes('cor'));
+      document.getElementById('campoImagem').classList.toggle('oculto', !extras.includes('imagem'));
+    }
+    // Exibir ou ocultar os campos extras
+document.getElementById("alteracoesExtras").addEventListener("change", function () {
+  const mostrarExtras = this.value === "sim";
+  document.getElementById("opcoesExtras").style.display = mostrarExtras ? "block" : "none";
+});
 
-    document.querySelector('form').addEventListener('submit', async function (e) {
-      e.preventDefault();
+document.getElementById("tipoAlteracao").addEventListener("change", function () {
+  const mostrarDescricao = this.value === "imagem";
+  document.getElementById("descricaoImagem").style.display = mostrarDescricao ? "block" : "none";
+});
 
-      const email = document.getElementById('email').value;
-      const codigo = document.getElementById('codigo').value;
-      const titulo = document.getElementById('titulo').value;
-      const alterarFonte = document.getElementById('alterarFonte').value === 'sim';
-      const tipoFonte = document.getElementById('tipoFonte')?.value || null;
-      const linkReferencia = document.getElementById('linkReferencia').value;
-      const tipoAlteracao = document.getElementById('tipoAlteracao')?.value || null;
-      const descricaoImagem = document.getElementById('descricao-imagem')?.value || null;
-      const subtitulo = document.getElementById('subtitulo').value;
-      const autor = document.getElementById('autor').value;
-      const observacoes = document.getElementById('observacoes').value;
-
-      const { data, error } = await client.from('modificacoes_capa').insert([
-        {
-          email,
-          codigo,
-          titulo,
-          alterar_fonte: alterarFonte,
-          tipo_fonte: tipoFonte,
-          link_referencia: linkReferencia,
-          tipo_alteracao: tipoAlteracao,
-          descricao_imagem: descricaoImagem,
-          subtitulo,
-          autor,
-          observacoes
-        }
-      ]);
-
-      if (error) {
-        alert('Erro ao enviar: ' + error.message);
-        console.error(error);
-      } else {
-        alert('Formulário enviado com sucesso! Agora você será redirecionado para a página de pagamento.');
-        if (tipoAlteracao && tipoAlteracao === 'imagem') {
-          window.location.href = 'pagamento-com-imagem.html';
-        } else {
-          window.location.href = 'https://lirio-design.pay.yampi.com.br/r/LYYE41874T';
-        }
-      }
-    });
   </script>
+
+<script>
+    function redirecionarPagamento() {
+      const modificarImagem = document.getElementById("alterar-imagem").value;
+  
+      if (modificarImagem === "sim") {
+        // Se escolheu modificar imagem, redireciona para pagamento de R$55
+        window.location.href = "pagamento-imagem.html";
+      } else {
+        // Se não, redireciona para o pagamento padrão de R$45
+        window.location.href = "pagamento-simples.html";
+      }
+    }
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  // 1. Criar cliente Supabase
+  const supabase = supabase.createClient(
+    'https://tcnonaprqfcpqmscrbkg.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw' // Substitua por sua chave pública anon do Supabase
+  );
+
+  // 2. Capturar o envio do formulário
+  document.querySelector('form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // 3. Coletar dados do formulário
+    const email = document.getElementById('email').value;
+    const codigo = document.getElementById('codigo').value;
+    const titulo = document.getElementById('titulo').value;
+    const alterarFonte = document.getElementById('alterarFonte').value;
+    const tipoFonte = document.getElementById('tipoFonte')?.value || null;
+    const linkReferencia = document.getElementById('linkReferencia').value;
+    const alteracoesExtras = document.getElementById('alteracoesExtras').value;
+    const tipoAlteracao = document.getElementById('tipoAlteracao')?.value || null;
+    const descricaoImagem = document.getElementById('descricao-imagem')?.value || null;
+    const subtitulo = document.getElementById('subtitulo').value;
+    const autor = document.getElementById('autor').value;
+    const observacoes = document.getElementById('observacoes').value;
+
+    // 4. Enviar para Supabase
+    const { data, error } = await supabase.from('modificacoes_capa').insert([
+      {
+        email,
+        codigo,
+        titulo,
+        alterar_fonte: alterarFonte,
+        tipo_fonte: tipoFonte,
+        link_referencia: linkReferencia,
+        alteracoes_extras: alteracoesExtras,
+        tipo_alteracao: tipoAlteracao,
+        descricao_imagem: descricaoImagem,
+        subtitulo,
+        autor,
+        observacoes
+      }
+    ]);
+
+    if (error) {
+      alert('Erro ao enviar: ' + error.message);
+      console.error(error);
+    } else {
+      alert('Formulário enviado com sucesso! Agora você será redirecionado para a página de pagamento.');
+      // 5. Redirecionar para pagamento
+      if (tipoAlteracao === 'imagem') {
+        window.location.href = 'pagamento-com-imagem.html'; // ajuste conforme sua página
+      } else {
+        window.location.href = 'pagamento-normal.html'; // ajuste conforme sua página
+      }
+    }
+  });
+</script>
+
 
 </body>
 </html>
