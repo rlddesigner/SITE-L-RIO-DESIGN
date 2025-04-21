@@ -11,14 +11,20 @@ const supabase = createClient(
       return { statusCode: 405, body: 'Método não permitido' };
     }
   
-    const payload = JSON.parse(event.body || '{}');
-    const email = payload.customer?.data?.email || payload.email;
-    const codigo = payload.items?.data?.[0]?.sku?.data?.sku || payload.codigo;
+    const eventBody = JSON.parse(event.body || '{}');
+    console.log("🔍 Payload recebido:", JSON.stringify(eventBody));
   
-    console.log("🔔 Dados recebidos:", { email, codigo });
+    // Pegar os dados corretos do JSON da Yampi:
+    const email = eventBody?.resource?.customer?.data?.email;
+    const codigo = eventBody?.resource?.items?.data?.[0]?.sku;
+  
+    console.log("📬 Dados recebidos:", { email, codigo });
   
     if (!email || !codigo) {
-      return { statusCode: 400, body: 'Email ou código ausente.' };
+      return {
+        statusCode: 400,
+        body: 'Email ou código ausente.'
+      };
     }
   
     // Buscar no Supabase
