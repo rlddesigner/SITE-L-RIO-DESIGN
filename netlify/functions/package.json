@@ -1,7 +1,6 @@
 {
     "dependencies": {
-      "@supabase/supabase-js": "^2.0.0",
-      "@emailjs/nodejs": "^3.1.0"
+        "@emailjs/nodejs": "^5.0.2",
+        "@supabase/supabase-js": "^2.0.0"
     }
-  }
-  
+}
