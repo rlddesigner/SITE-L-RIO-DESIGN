@@ -15,13 +15,14 @@ const supabase = createClient(
   
     try {
       const payload = JSON.parse(event.body);
-      console.log("🔍 Payload recebido:", payload);
+      console.log("📦 Payload recebido:", JSON.stringify(payload));
   
       const email = payload.resource.customer.data.email;
       const codigo = payload.resource.items.data[0].sku.data.sku;
   
       if (!email || !codigo) {
-        return { statusCode: 400, body: 'Email ou código ausente.' };
+        console.log("⚠️ Email ou código ausente");
+        return { statusCode: 400, body: 'Email ou código ausente' };
       }
   
       const { data: capa, error } = await supabase
@@ -31,7 +32,8 @@ const supabase = createClient(
         .single();
   
       if (error || !capa) {
-        return { statusCode: 404, body: 'Capa não encontrada.' };
+        console.log("❌ Capa não encontrada:", error);
+        return { statusCode: 404, body: 'Capa não encontrada' };
       }
   
       await emailjs.send('service_vafq5zq', 'template_l3x34bo', {
@@ -45,16 +47,17 @@ const supabase = createClient(
         .update({ disponivel: false, reservada: false })
         .eq('codigo', codigo);
   
+      console.log("✅ E-mail enviado e status atualizado");
       return {
         statusCode: 200,
-        body: 'Enviado com sucesso.'
+        body: 'E-mail enviado com sucesso'
       };
   
     } catch (err) {
-      console.log("❌ Erro:", err);
+      console.log("❌ Erro geral:", err);
       return {
         statusCode: 500,
-        body: 'Erro ao processar webhook.'
+        body: 'Erro ao processar o webhook'
       };
     }
   };
