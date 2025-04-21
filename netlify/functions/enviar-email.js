@@ -19,7 +19,7 @@ import { Resend } from 'resend';
       }
   
       const { error } = await resend.emails.send({
-        from: 'Lírio Design <@liriodesign.shop>',
+        from: 'Lírio Design <vendas@lliriodesign.shop>',
         to: para,
         subject: assunto || 'Sua capa está pronta!',
         html: `

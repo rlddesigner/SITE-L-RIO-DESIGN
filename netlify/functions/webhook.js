@@ -35,7 +35,7 @@ const supabase = createClient(
   
     try {
       await resend.emails.send({
-        from: 'Lírio D. Design <@lliriodesign.shop>',
+        from: 'Lírio D. Design <vendas@lliriodesign.shop>',
         to: [email],
         subject: '💌 Sua capa está pronta!',
         html: `
