@@ -221,61 +221,67 @@ document.getElementById("tipoAlteracao").addEventListener("change", function () 
 
   // 2. Capturar o envio do formulário
   document.querySelector('form').addEventListener('submit', async function (e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const email = document.getElementById('email').value;
-  const codigo = document.getElementById('codigo').value;
-  const titulo = document.getElementById('titulo').value;
-  const alterarFonte = document.getElementById('alterarFonte').value === 'sim';
-  const tipoFonte = document.getElementById('tipoFonte')?.value || null;
-  const linkReferencia = document.getElementById('linkReferencia').value;
-  const tipoAlteracao = document.getElementById('tipoAlteracao')?.value || null;
-  const descricaoImagem = document.getElementById('descricao-imagem')?.value || null;
-  const subtitulo = document.getElementById('subtitulo').value;
-  const autor = document.getElementById('autor').value;
-  const observacoes = document.getElementById('observacoes').value;
+    // 3. Coletar dados do formulário
+    const email = document.getElementById('email').value;
+    const codigo = document.getElementById('codigo').value;
+    const titulo = document.getElementById('titulo').value;
+    const alterarFonte = document.getElementById('alterarFonte').value;
+    const tipoFonte = document.getElementById('tipoFonte')?.value || null;
+    const linkReferencia = document.getElementById('linkReferencia').value;
+    const alteracoesExtras = document.getElementById('alteracoesExtras').value;
+    const tipoAlteracao = document.getElementById('tipoAlteracao')?.value || null;
+    const descricaoImagem = document.getElementById('descricao-imagem')?.value || null;
+    const subtitulo = document.getElementById('subtitulo').value;
+    const autor = document.getElementById('autor').value;
+    const observacoes = document.getElementById('observacoes').value;
 
-  // Primeiro, insere no Supabase
-  const { data, error } = await client.from('modificacoes_capa').insert([{
-    email,
-    codigo,
-    titulo,
-    alterar_fonte: alterarFonte,
-    tipo_fonte: tipoFonte,
-    link_referencia: linkReferencia,
-    tipo_alteracao: tipoAlteracao,
-    descricao_imagem: descricaoImagem,
-    subtitulo,
-    autor,
-    observacoes
-  }]);
+    // 4. Enviar para Supabase
+    const { data, error } = await supabase.from('modificacoes_capa').insert([
+      {
+        email,
+        codigo,
+        titulo,
+        alterar_fonte: alterarFonte,
+        tipo_fonte: tipoFonte,
+        link_referencia: linkReferencia,
+        alteracoes_extras: alteracoesExtras,
+        tipo_alteracao: tipoAlteracao,
+        descricao_imagem: descricaoImagem,
+        subtitulo,
+        autor,
+        observacoes
+      }
+    ]);
 
-  if (error) {
-    alert('Erro ao enviar: ' + error.message);
-    console.error(error);
-    return;
-  }
+    if (error) {
+      alert('Erro ao enviar: ' + error.message);
+      console.error(error);
+    } else {
+      alert('Formulário enviado com sucesso! Agora você será redirecionado para a página de pagamento.');
+      // 5. Redirecionar para pagamento
+      
+      // 5. Redirecionar para pagamento
+      const { data: capaData, error: capaErro } = await supabase
+        .from('preprontas')
+        .select('link_pagamento_personalizado, link_pagamento_imagem')
+        .eq('codigo', codigo)
+        .single();
 
-  // Depois busca o link correto e redireciona
-  const { data: capaData, error: capaErro } = await client
-    .from('preprontas')
-    .select('link_pagamento_personalizado, link_pagamento_imagem')
-    .eq('codigo', codigo)
-    .single();
+      if (capaErro || !capaData) {
+        alert('Erro ao buscar link de pagamento.');
+        return;
+      }
 
-  if (capaErro || !capaData) {
-    alert('Erro ao buscar link de pagamento.');
-    return;
-  }
+      const linkPagamento = tipoAlteracao === 'imagem'
+        ? capaData.link_pagamento_imagem
+        : capaData.link_pagamento_personalizado;
 
-  const linkPagamento = tipoAlteracao === 'imagem'
-    ? capaData.link_pagamento_imagem
-    : capaData.link_pagamento_personalizado;
+      window.location.href = linkPagamento;
 
-  alert('Formulário enviado com sucesso! Agora você será redirecionado para a página de pagamento.');
-  window.location.href = linkPagamento;
-});
-
+    }
+  });
 </script>
 
 
