@@ -19,7 +19,12 @@ exports.handler = async (event) => {
   const skuOriginal = eventBody?.resource?.items?.data?.[0]?.sku?.data?.sku;
   const nomeProduto = eventBody?.resource?.items?.data?.[0]?.product?.data?.name;
 
-  const codigo = skuOriginal?.split('-').slice(0, 2).join('-');  // exemplo: CAPA-123-MANUAL → CAPA-123
+  // Limpeza completa:
+const codigo = skuOriginal
+.trim()
+.toUpperCase()
+.replace(/\s+/g, '')           // remove todos espaços
+.replace(/-(AUTO|MANUAL)$/i, ''); // remove sufixos finais
   const isEntregaAutomatica = skuOriginal?.toUpperCase().endsWith('-AUTO');
 
   if (!email || !codigo) {
