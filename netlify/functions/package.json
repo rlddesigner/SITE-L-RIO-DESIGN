@@ -1,9 +1,8 @@
 {
-    "name": "functions",
+    "name": "funcoes-netlify",
     "version": "1.0.0",
-    "type": "commonjs",
     "dependencies": {
-      "@emailjs/nodejs": "^3.1.0",
+      "@emailjs/nodejs": "^3.11.0",
       "@supabase/supabase-js": "^2.39.5"
     }
   }
