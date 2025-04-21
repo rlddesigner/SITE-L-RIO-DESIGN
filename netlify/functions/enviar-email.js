@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-  const resend = new Resend('re_f3ZwS2km_LnHophLdz7iCa4rg8FsqDNCD'); // sua API KEY
+  const resend = new Resend('re_cK2mKp55_3H3rRBiSyjTRcpxM23cNF6pk'); // sua API KEY
 
   export default async (req) => {
     try {
