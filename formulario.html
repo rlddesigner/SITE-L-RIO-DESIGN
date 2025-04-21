@@ -214,7 +214,7 @@ document.getElementById("tipoAlteracao").addEventListener("change", function () 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
   // 1. Criar cliente Supabase
-  const supabase = supabase.createClient(
+  const client = supabase.createClient(
     'https://tcnonaprqfcpqmscrbkg.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw' // Substitua por sua chave pública anon do Supabase
   );
@@ -238,7 +238,7 @@ document.getElementById("tipoAlteracao").addEventListener("change", function () 
     const observacoes = document.getElementById('observacoes').value;
 
     // 4. Enviar para Supabase
-    const { data, error } = await supabase.from('modificacoes_capa').insert([
+    const { data, error } = await client.from('modificacoes_capa').insert([
       {
         email,
         codigo,
