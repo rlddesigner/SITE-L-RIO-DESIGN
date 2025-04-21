@@ -16,16 +16,14 @@ exports.handler = async (event) => {
 
   const eventBody = JSON.parse(event.body || '{}');
   const email = eventBody?.resource?.customer?.data?.email;
-  const skuOriginal = eventBody?.resource?.items?.data?.[0]?.sku?.data?.sku;
+  const skuOriginal = eventBody?.resource?.items?.data?.[0]?.sku?.data?.sku || '';
   const nomeProduto = eventBody?.resource?.items?.data?.[0]?.product?.data?.name;
-
-  // Limpeza completa:
-const codigo = skuOriginal
-.trim()
-.toUpperCase()
-.replace(/\s+/g, '')           // remove todos espaços
-.replace(/-(AUTO|MANUAL)$/i, ''); // remove sufixos finais
-  const isEntregaAutomatica = skuOriginal?.toUpperCase().endsWith('-AUTO');
+  
+  // Limpeza e padronização
+  const skuLimpo = skuOriginal.trim().toUpperCase().replace(/\s+/g, '');
+  const codigo = skuLimpo.replace(/-(AUTO|MANUAL)$/i, '');
+  const isEntregaAutomatica = skuLimpo.endsWith('-AUTO');
+  
 
   if (!email || !codigo) {
     return {
