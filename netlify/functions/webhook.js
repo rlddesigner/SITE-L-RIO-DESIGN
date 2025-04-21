@@ -6,58 +6,56 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjbm9uYXBycWZjcHFtc2NyYmtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzYzOTQsImV4cCI6MjA2MDIxMjM5NH0.0yyj8uPdF3C3eQGPrFBWVvHuczCnHKhnXGsbBpN96Xw'
   );
 
-  emailjs.init("avKNQkuVniC59Omdz");
-
   exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
       return { statusCode: 405, body: 'Método não permitido' };
     }
   
+    const payload = JSON.parse(event.body || '{}');
+    const email = payload.customer?.data?.email || payload.email;
+    const codigo = payload.items?.data?.[0]?.sku?.data?.sku || payload.codigo;
+  
+    console.log("🔔 Dados recebidos:", { email, codigo });
+  
+    if (!email || !codigo) {
+      return { statusCode: 400, body: 'Email ou código ausente.' };
+    }
+  
+    // Buscar no Supabase
+    const { data: capa, error } = await supabase
+      .from('preprontas')
+      .select('*')
+      .eq('codigo', codigo)
+      .single();
+  
+    if (error || !capa) {
+      return { statusCode: 404, body: 'Capa não encontrada.' };
+    }
+  
     try {
-      const payload = JSON.parse(event.body);
-      console.log("📦 Payload recebido:", JSON.stringify(payload));
-  
-      const email = payload.resource.customer.data.email;
-      const codigo = payload.resource.items.data[0].sku.data.sku;
-  
-      if (!email || !codigo) {
-        console.log("⚠️ Email ou código ausente");
-        return { statusCode: 400, body: 'Email ou código ausente' };
-      }
-  
-      const { data: capa, error } = await supabase
-        .from('preprontas')
-        .select('*')
-        .eq('codigo', codigo)
-        .single();
-  
-      if (error || !capa) {
-        console.log("❌ Capa não encontrada:", error);
-        return { statusCode: 404, body: 'Capa não encontrada' };
-      }
-  
       await emailjs.send('service_vafq5zq', 'template_l3x34bo', {
         email,
         codigo: capa.codigo,
         link_arquivos: capa.link_arquivos
+      }, {
+        publicKey: 'avKNQkuVniC59Omdz', // ✅ emailjs versão nova exige isso
       });
   
+      // Atualiza status da capa no Supabase
       await supabase
         .from('preprontas')
         .update({ disponivel: false, reservada: false })
         .eq('codigo', codigo);
   
-      console.log("✅ E-mail enviado e status atualizado");
       return {
         statusCode: 200,
-        body: 'E-mail enviado com sucesso'
+        body: 'Enviado com sucesso.',
       };
-  
     } catch (err) {
-      console.log("❌ Erro geral:", err);
+      console.error("❌ Erro ao enviar e-mail:", err);
       return {
         statusCode: 500,
-        body: 'Erro ao processar o webhook'
+        body: 'Erro ao enviar e-mail.',
       };
     }
   };
