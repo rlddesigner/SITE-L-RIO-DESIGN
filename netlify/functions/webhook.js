@@ -16,7 +16,7 @@ const supabase = createClient(
   
     // Pegar os dados corretos do JSON da Yampi:
     const email = eventBody?.resource?.customer?.data?.email;
-    const codigo = eventBody?.resource?.items?.data?.[0]?.sku;
+    const codigo = eventBody?.resource?.items?.data?.[0]?.sku?.data?.sku;
   
     console.log("📬 Dados recebidos:", { email, codigo });
   
