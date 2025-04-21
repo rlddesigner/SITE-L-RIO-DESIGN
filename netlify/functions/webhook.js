@@ -68,7 +68,7 @@ const supabase = createClient(
                   <a href="https://instagram.com/lliriodesign" target="_blank" style="margin-right: 10px;">
                     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="20" alt="Instagram" />
                   </a>
-                  <a href="mailto:vendas@lliriodesign.shop" style="margin-right: 10px;">
+                  <a href="mailto:lliriodesign@gmail.com" style="margin-right: 10px;">
                     <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="20" alt="Email" />
                   </a>
                 </p>
